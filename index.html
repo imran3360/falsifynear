@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FalsifyNEAR — An investment thesis that tries to kill itself</title>
 <meta name="description" content="The full NEAR investment thesis behind FalsifyNEAR, as a dashboard: the thesis, why each of the six sealed bars was set where it was, live supply and valuation, the value-capture contradiction, competition and risks, latest news, the official scoreboard, and how to verify every hash yourself.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230e1220'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='38' font-weight='bold' fill='%235eead4' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+<meta property="og:title" content="FalsifyNEAR — An investment thesis that tries to kill itself">
+<meta property="og:description" content="Six NEAR claims sealed on-chain BEFORE testing. Official run: 4 of 6 held — thesis partially broken, by design. Verify every hash yourself.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://falsifynear.pages.dev/">
+<meta property="og:image" content="https://falsifynear.pages.dev/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
   :root{
     --bg:#07090f; --panel:#0e1220; --panel2:#151b2e; --line:#26304a;
@@ -113,8 +120,8 @@
     .side{width:100%;flex:none;height:auto;position:static;border-right:none;border-bottom:1px solid var(--line);padding:14px 12px 8px}
     .brand{font-size:22px}
     .brandsub{margin-bottom:8px}
-    .navwrap{display:grid;grid-template-rows:repeat(6,auto);grid-auto-flow:column;grid-template-columns:1fr 1fr;gap:7px;padding:4px 2px 10px}
-    .navbtn{width:auto;white-space:normal;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:15px;margin:0}
+    .navwrap{display:block;padding:2px 0 8px}
+    .navbtn{width:100%;white-space:normal;padding:9px 11px;border:1px solid transparent;border-radius:8px;font-size:16px;margin:2px 0}
     .navbtn.on{box-shadow:inset 3px 0 0 var(--accent)}
     .side .foot{display:none}
     .main{padding:20px 16px 48px}
@@ -159,6 +166,17 @@
   hash-sealed on NEAR testnet <em>before</em> any data was consulted for a verdict, and the official
   run is published with its receipts. The verdict was not kind. That is the point.</p>
 
+  <div class="label" style="margin-top:4px">The six claims — official run, 14 Nov 2026</div>
+  <div class="mini">
+    <div class="minic"><span class="cid">C1</span> <span class="badge b-pass">PASS</span><div class="t">Intents volume, 30d ≥ $3.0B</div><div class="v">$3.80B</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C2</span> <span class="badge b-pass">PASS</span><div class="t">NEAR TVL ≥ $150M</div><div class="v">$154.8M</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C3</span> <span class="badge b-fail">FAIL</span><div class="t">Chain fees, 30d ≥ $250K</div><div class="v">$129K</div><div class="bar"><i style="width:52%;background:var(--fail)"></i></div></div>
+    <div class="minic"><span class="cid">C4</span> <span class="badge b-pass">PASS</span><div class="t">Validators ≥ 300</div><div class="v">355</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C5</span> <span class="badge b-pass">PASS</span><div class="t">Market cap ≥ $4.0B</div><div class="v">$4.22B</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C6</span> <span class="badge b-fail">FAIL</span><div class="t">Price within 50% of ATH</div><div class="v">−84.3%</div><div class="bar"><i style="width:32%;background:var(--fail)"></i></div></div>
+  </div>
+
+
   <div class="nfa"><strong>NOT FINANCIAL ADVICE.</strong> A public experiment in falsifiable analysis —
   not a recommendation to buy, sell, or hold NEAR or any other asset. Figures come from public APIs,
   change constantly, and can be wrong. Do your own research.</div>
@@ -177,16 +195,6 @@
     <div class="step"><span class="n">1</span><h3>Seal the claims</h3><p>Six pass/fail bars for NEAR were written down, hashed, and sealed in a testnet contract — before any verdict data was consulted.</p></div>
     <div class="step"><span class="n">2</span><h3>Test them live</h3><p>The test page checks each bar against live public data — DefiLlama, CoinGecko, NEAR RPC — in the visitor's own browser. No backend, no hand-picked screenshots.</p></div>
     <div class="step"><span class="n">3</span><h3>Seal the verdict</h3><p>The official run's results file was hashed and sealed on-chain after the run. Anyone can re-hash the published file and compare — see Verify It Yourself.</p></div>
-  </div>
-
-  <div class="label" style="margin-top:18px">The six claims — official run, 14 Nov 2026</div>
-  <div class="mini">
-    <div class="minic"><span class="cid">C1</span> <span class="badge b-pass">PASS</span><div class="t">Intents volume, 30d ≥ $3.0B</div><div class="v">$3.80B</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
-    <div class="minic"><span class="cid">C2</span> <span class="badge b-pass">PASS</span><div class="t">NEAR TVL ≥ $150M</div><div class="v">$154.8M</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
-    <div class="minic"><span class="cid">C3</span> <span class="badge b-fail">FAIL</span><div class="t">Chain fees, 30d ≥ $250K</div><div class="v">$129K</div><div class="bar"><i style="width:52%;background:var(--fail)"></i></div></div>
-    <div class="minic"><span class="cid">C4</span> <span class="badge b-pass">PASS</span><div class="t">Validators ≥ 300</div><div class="v">355</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
-    <div class="minic"><span class="cid">C5</span> <span class="badge b-pass">PASS</span><div class="t">Market cap ≥ $4.0B</div><div class="v">$4.22B</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
-    <div class="minic"><span class="cid">C6</span> <span class="badge b-fail">FAIL</span><div class="t">Price within 50% of ATH</div><div class="v">−84.3%</div><div class="bar"><i style="width:32%;background:var(--fail)"></i></div></div>
   </div>
 
   <div class="quicklinks">
@@ -398,6 +406,7 @@
   unreachable, the source links below still take you to the coverage directly.</p>
   <div class="panel">
     <div class="label">Live headlines (GDELT)</div>
+    <p class="sub" style="font-size:13px">Live feed <span id="newsStamp2" style="color:var(--accent)"></span> — auto-refreshes every 5 minutes while this page is open.</p>
     <div id="newsList"><p class="sub" style="margin:6px 0">Fetching headlines…</p></div>
   </div>
   <div class="panel">
@@ -493,7 +502,7 @@
     <p class="gs" style="font-size:12px;color:var(--faint);margin:10px 0 0">Fetched live in your browser. If a source is unreachable the card says so — never a guessed number.</p>
   </div>
   <div class="railcard">
-    <div class="label">Latest news</div>
+    <div class="label">Latest news <span id="newsStamp" style="color:var(--accent)"></span></div>
     <div class="railnews" id="railNews"><p style="margin:6px 0">Fetching headlines…</p></div>
     <button class="railgo" data-go="news">All headlines &amp; sources →</button>
   </div>
@@ -597,6 +606,8 @@ function setCard(id, val, subId, sub){
 
 // === News: GDELT first, Google News RSS as fallback, honest failure last ===
 function renderNews(arts){
+  const stampTxt = (arts && arts.length) ? ("· updated " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })) : "· live — retrying every 5 min";
+  ["newsStamp", "newsStamp2"].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = stampTxt; });
   const full = document.getElementById("newsList");
   const rail = document.getElementById("railNews");
   function fill(host, list, compact){
@@ -625,7 +636,7 @@ function renderNews(arts){
   fill(full, arts, false);
   fill(rail, arts.slice(0, 5), true);
 }
-(async () => {
+async function loadNews(){
   let arts = null;
   try {
     const d = await getJSON("https://api.gdeltproject.org/api/v2/doc/doc?query=%22NEAR%20Protocol%22%20crypto&mode=ArtList&maxrecords=8&format=json&sort=DateDesc");
@@ -655,7 +666,9 @@ function renderNews(arts){
     } catch (e) {}
   }
   renderNews(arts);
-})();
+}
+loadNews();
+setInterval(() => { if (!document.hidden) loadNews(); }, 5 * 60 * 1000);
 </script>
 </body>
 </html>
