@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The NEAR Thesis, In Full — FalsifyNEAR</title>
+<meta name="description" content="The full investment thesis behind FalsifyNEAR: what would have to be true for NEAR to be a good bet, why each of the six falsifiable bars was set where it was, and the value-accrual contradiction faced head-on.">
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#12161f; --panel2:#171c28; --line:#262e40;
+    --ink:#e8ecf3; --dim:#9aa7bd; --faint:#6b7790;
+    --pass:#3fb97f; --fail:#e5534b; --unv:#d9a13b;
+    --accent:#7cc4ff;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 64px}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:8px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.15;margin:10px 0 6px}
+  h1 em{font-style:italic;color:var(--accent)}
+  .tagline{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--dim);margin:0 0 14px}
+  .builder{font-size:14px;color:var(--faint)}
+  .builder a{color:var(--dim)}
+  .nfa{border:1px solid var(--unv);background:rgba(217,161,59,.08);border-radius:8px;
+       padding:12px 16px;margin-top:18px;font-size:14px}
+  .nfa strong{color:var(--unv);letter-spacing:.06em}
+  section{margin-top:40px}
+  h2{font-family:var(--serif);font-size:27px;font-weight:600;margin:0 0 6px}
+  h2 .no{font-family:var(--mono);font-size:14px;color:var(--accent);margin-right:10px}
+  .sub{color:var(--dim);margin:0 0 16px;font-size:15px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0}
+  .panel p{margin:10px 0}
+  .hash{font-family:var(--mono);font-size:13px;word-break:break-all;color:var(--ink)}
+  .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+  .badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;
+         padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-pass{color:var(--pass);border-color:var(--pass);background:rgba(63,185,127,.08)}
+  .b-fail{color:var(--fail);border-color:var(--fail);background:rgba(229,83,75,.08)}
+  .b-unv{color:var(--unv);border-color:var(--unv);background:rgba(217,161,59,.08)}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+  .cid{font-family:var(--mono);color:var(--accent);font-weight:700}
+  a{color:var(--accent)}
+  .cta{display:block;text-align:center;background:var(--panel2);border:1px solid var(--accent);border-radius:10px;
+       padding:18px 20px;margin:22px 0;font-size:17px}
+  footer{border-top:1px solid var(--line);margin-top:48px;padding-top:22px;font-size:13px;color:var(--faint)}
+  footer p{margin:8px 0}
+  @media (max-width:560px){ h1{font-size:30px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">NEAR Hackathon · Thesis Track · The Full Thesis</div>
+  <h1>The NEAR thesis, <em>in full</em></h1>
+  <p class="tagline">What would have to be true — stated completely, before the data judges it.</p>
+  <p class="builder">Part of <a href="index.html">FalsifyNEAR</a> · Built by Imran
+    (<a href="https://github.com/imran3360">github.com/imran3360</a>) ·
+    Contract: <span class="hash" style="font-size:13px">falsifynear.testnet</span> (NEAR testnet)</p>
+  <div class="nfa"><strong>NOT FINANCIAL ADVICE.</strong> This page states an investment thesis and the
+    evidence standards it accepts for itself, so that it can be tested — and possibly killed — in public.
+    It is not a recommendation to buy, sell, or hold NEAR or any other asset. Figures come from public
+    APIs, change constantly, and can be wrong. Do your own research.</div>
+</header>
+
+<section>
+  <h2><span class="no">01</span>The thesis in one paragraph</h2>
+  <div class="panel">
+    <p>NEAR's bet is that the winning layer of crypto is not another fast chain, but
+    <strong>chain abstraction</strong>: users state an intent, and a network of solvers executes it
+    across chains without the user caring which chain did the work. If that bet is right, then three
+    things should be visibly true at the same time: the Intents economy should already move
+    <strong>real money at real scale</strong>; the underlying chain should still show
+    <strong>independent signs of life</strong> (DeFi depth, decentralization, fees); and the token
+    should be <strong>large enough to matter</strong> — while its price, still far below the last
+    cycle's high, leaves room if the first two keep compounding. That is the bull case, stated as
+    strongly as it can honestly be stated. The rest of this page is where it can break: the thesis
+    deliberately separates <em>usage being real</em> from <em>value reaching the token</em>, because
+    those are different claims — and right now, one of them fails.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">02</span>Why each bar was set where it was</h2>
+  <p class="sub">Six claims, six thresholds — fixed in writing and hash-sealed on NEAR testnet
+    (claims block 277671036) <em>before</em> any verdict was computed. A bar set after seeing the data
+    proves nothing, so each bar below also states what it is meant to distinguish.</p>
+  <table>
+    <tr><th>Claim</th><th>The bar</th><th>Why this level</th></tr>
+    <tr>
+      <td><span class="cid">C1</span> Intents volume</td><td>≥ $3.0B / 30 days</td>
+      <td>The scale test. Serious cross-chain execution flow is measured in billions per month;
+      below ~$1B the Intents story would be a niche experiment, not an economy. $3B separates
+      "material" from "marginal".</td>
+    </tr>
+    <tr>
+      <td><span class="cid">C2</span> Chain TVL</td><td>≥ $150M</td>
+      <td>The DeFi relevance floor. Chains under ~$100M of TVL are, in practice, DeFi-irrelevant.
+      $150M is a deliberately <em>modest</em> bar — "DeFi exists here at real scale", nothing more.
+      It currently passes by ~3%, which this page counts as a weakness of the thesis, not a strength.</td>
+    </tr>
+    <tr>
+      <td><span class="cid">C3</span> Chain fees</td><td>≥ $250K / 30 days</td>
+      <td>The value-capture floor — the minimum at which "usage pays the chain" stops being a slogan.
+      Note the honesty built into this bar: even passing it (~$3M annualized) against a ~$4B market
+      cap would be a price-to-fees multiple in the thousands, so a pass would <em>not</em> prove value
+      capture; it would only prove fees are non-trivial. A fail — which is what happened — proves
+      they are not yet even that.</td>
+    </tr>
+    <tr>
+      <td><span class="cid">C4</span> Validators</td><td>≥ 300 current validators</td>
+      <td>The decentralization floor for the mainnet validator set, read directly from NEAR RPC.
+      Stated limit: this count includes chunk-only producers and says nothing about stake
+      concentration (a Nakamoto-coefficient test would be stricter). It is a floor, not a certificate.</td>
+    </tr>
+    <tr>
+      <td><span class="cid">C5</span> Market cap</td><td>≥ $4.0B</td>
+      <td>The relevance test: does the market still price NEAR as a large-cap asset, or has it been
+      abandoned to small-cap territory? $4B keeps it in the large-cap set.</td>
+    </tr>
+    <tr>
+      <td><span class="cid">C6</span> Price recovery</td><td>Within 50% of ATH</td>
+      <td>The re-rating test. A thesis that claims the market is re-pricing NEAR upward should be
+      able to show the price at least halfway back to its all-time high. At ~−84% it cannot — this
+      claim is the one the bull case most wants to avoid, which is exactly why it is here.</td>
+    </tr>
+  </table>
+  <div class="panel">
+    <p><strong>A correlation, disclosed rather than hidden:</strong> C5 and C6 are both derived from
+    price (market cap is price × supply), so the six claims are not six fully independent tests —
+    one large price move can move two votes. They are kept separate because they test different
+    things — absolute scale (C5) versus recovery (C6) — and the official run shows why the
+    distinction matters: C5 passed on supply and rank while C6 failed on the same drawdown. But a
+    reader weighing the verdict should know the overlap exists. It is stated here, in the thesis
+    itself, not discovered by critics later.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">03</span>The contradiction, head-on: volume is not value capture</h2>
+  <div class="panel">
+    <p>The official run produced the most interesting pair of numbers in this project:
+    <strong>$3.797B</strong> of Intents volume in 30 days (C1, pass) next to
+    <strong>$129,456</strong> of chain fees in 30 days (C3, fail — about half its bar). Both numbers
+    are true at once, and the gap between them <em>is</em> the current state of the NEAR thesis.</p>
+    <p>Why the gap exists: Intents volume is gross solver flow, much of it cross-chain — a swap can
+    be an "Intents" trade without settling as fee-paying NEAR L1 activity. Volume measures that the
+    machine is being used; fees measure whether the chain and its token are being paid for that use.
+    Annualized, the run's fees are a ~$1.6M run-rate against a $4.22B market cap — a price-to-fees
+    multiple of roughly 2,700×. No framing makes that cheap. For the token thesis to work, Intents
+    economics — fees taken in traded assets, demand for NEAR-denominated settlement and staking —
+    must eventually show up in C3-type numbers. Today they do not.</p>
+    <p><strong>What would change this verdict:</strong> a later run, against the same sealed
+    thresholds, in which C3 crosses $250K/30d while C1 holds — that is the signature of value
+    capture arriving, and because the thresholds cannot be edited, nobody gets to move the bar when
+    it happens. What would kill the thesis outright: C1 decaying below its bar, or C2 flipping in a
+    routine DeFi drawdown — either turns PARTIALLY BROKEN into BROKEN, in public, with the receipts
+    sealed.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">04</span>Competition and the honest risks</h2>
+  <div class="panel">
+    <p><strong>Competition.</strong> Solana and the major Ethereum L2s dominate current fee revenue
+    and developer mindshare; on a pure "who gets paid today" comparison, NEAR loses, and C3's failure
+    is that fact measured rather than argued. NEAR's counter-position is architectural: intents and
+    chain abstraction aim at the layer <em>above</em> any single chain, plus a serious AI-agent
+    angle (agent identity and payments need exactly this kind of intent infrastructure). That is a
+    bet on where value moves next, not a claim about where it sits today.</p>
+    <p><strong>Risks, plainly.</strong> (1) Execution-layer value may accrue to solvers and
+    applications rather than the L1 token — the C1/C3 gap is precisely this risk, already visible.
+    (2) TVL's ~3% margin means one bad DeFi week flips C2. (3) Price at −84% from ATH may reflect
+    durable market judgment, not mispricing. (4) All figures here ride on third-party aggregators
+    (DefiLlama, CoinGecko) whose methodologies can change; the page links every figure to its source
+    and marks unreachable data UNVERIFIABLE rather than guessing. (5) This is one snapshot method:
+    spot values, no time-averaging — near-threshold claims can flip between runs, which is why the
+    verdict of record is a single dated, sealed run and not a live "score".</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">05</span>The scoreboard — official run, 14 Nov 2026</h2>
+  <p class="sub">Run at 21:20 Dhaka (15:20 UTC) on the live page, against the thresholds sealed
+    earlier that day. Verdict sealed on-chain afterwards via <span class="hash" style="font-size:12px">record_verdict</span>
+    (block 277675514) — claims first, verdict second, order verifiable by anyone.</p>
+  <table>
+    <tr><th>Claim</th><th>Result</th><th>Live value at the run</th></tr>
+    <tr><td><span class="cid">C1</span> Intents 30d volume ≥ $3.0B</td><td><span class="badge b-pass">PASS</span></td><td>$3,797,462,047</td></tr>
+    <tr><td><span class="cid">C2</span> TVL ≥ $150M</td><td><span class="badge b-pass">PASS</span></td><td>$154,761,535</td></tr>
+    <tr><td><span class="cid">C3</span> Chain fees 30d ≥ $250K</td><td><span class="badge b-fail">FAIL</span></td><td>$129,456</td></tr>
+    <tr><td><span class="cid">C4</span> Validators ≥ 300</td><td><span class="badge b-pass">PASS</span></td><td>355</td></tr>
+    <tr><td><span class="cid">C5</span> Market cap ≥ $4.0B</td><td><span class="badge b-pass">PASS</span></td><td>$4,220,521,830</td></tr>
+    <tr><td><span class="cid">C6</span> Price within 50% of ATH</td><td><span class="badge b-fail">FAIL</span></td><td>−84.26% vs ATH</td></tr>
+  </table>
+  <div class="panel">
+    <div class="label">Overall verdict of record</div>
+    <p style="font-size:19px;margin:4px 0"><strong>4 of 6 — THESIS PARTIALLY BROKEN.</strong></p>
+    <p class="builder">Claims hash: <span class="hash">0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86</span> (sealed, block 277671036)<br>
+    Results JSON hash: <span class="hash">1b5ce91c288174841d825dad4ae3f4b8bdc89f76487dc1edbd0970a147624595</span> (sealed, block 277675514)<br>
+    The exact results file is published in the repo as <span class="hash" style="font-size:12px">official-results.json</span> —
+    hash it yourself and compare.</p>
+  </div>
+  <a class="cta" href="index.html">Now try to kill it yourself — run the live test →</a>
+</section>
+
+<footer>
+  <p><strong>Data sources:</strong> DefiLlama (Intents volume, chain TVL, chain fees) · CoinGecko
+    (market cap, ATH distance) · NEAR mainnet RPC (validators) — the same keyless public sources the
+    live test uses, listed in full on the <a href="index.html">main page</a>.</p>
+  <p><strong>Method:</strong> thresholds fixed in writing and hash-sealed on NEAR testnet before any
+    verdict was computed; verdicts computed live in the visitor's browser; the verdict of record is
+    the dated official run above, sealed on-chain after the run.</p>
+  <p>FalsifyNEAR is one of two independent NEAR Hackathon entries by the same builder; the other is
+    CleanRoom Seal (github.com/imran3360/cleanroom-seal). Cross-disclosed per hackathon rules.</p>
+  <p><strong>NOT FINANCIAL ADVICE.</strong> Testnet contract; data from public APIs; figures change
+    over time and may be unavailable or wrong. Nothing here is a recommendation to buy, sell, or hold
+    any asset.</p>
+</footer>
+
+</div>
+</body>
+</html>

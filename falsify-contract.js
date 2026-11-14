@@ -36,11 +36,16 @@ class FalsifyContract {
 
   // Record one verdict run: the SHA-256 hash of the results JSON the
   // page produced, plus how many claims passed out of how many tested.
+  // Only the account that sealed the claims may record verdicts — anyone
+  // else's call throws, so the verdict list cannot be polluted with
+  // unofficial runs. (Added 2026-11-14 after an external review flagged
+  // that the first build let any account append verdicts.)
   // args: { results_hash, passed, total }
   @call({})
   record_verdict({ results_hash, passed, total }) {
     if (!/^[0-9a-f]{64}$/.test(results_hash || "")) throw new Error("results_hash must be a SHA-256 hex string");
     if (!this.claims || !this.claims.claims_hash) throw new Error("no claims registered yet — seal the claims before recording verdicts");
+    if (near.predecessorAccountId() !== this.claims.owner) throw new Error("only the claims owner can record verdicts");
     const p = Number(passed);
     const t = Number(total);
     if (!Number.isInteger(p) || !Number.isInteger(t) || p < 0 || t < 0 || p > t) {

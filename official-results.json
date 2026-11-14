@@ -1,0 +1,40 @@
+{
+  "project": "FalsifyNEAR",
+  "claims_hash": "0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86",
+  "tested_at": "2026-11-14T15:20:59.870Z",
+  "results": [
+    {
+      "id": "C1",
+      "value": 3797462047,
+      "verdict": "PASS"
+    },
+    {
+      "id": "C2",
+      "value": 154761534.91431263,
+      "verdict": "PASS"
+    },
+    {
+      "id": "C3",
+      "value": 129456,
+      "verdict": "FAIL"
+    },
+    {
+      "id": "C4",
+      "value": 355,
+      "verdict": "PASS"
+    },
+    {
+      "id": "C5",
+      "value": 4220521830,
+      "verdict": "PASS"
+    },
+    {
+      "id": "C6",
+      "value": -84.2566,
+      "verdict": "FAIL"
+    }
+  ],
+  "passed": 4,
+  "total": 6,
+  "overall": "PARTIALLY BROKEN"
+}

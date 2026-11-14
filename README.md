@@ -26,6 +26,12 @@ renders PASS / FAIL per claim and an overall verdict:
 On the night this was built, the live data said: 4 pass, 2 fail
 (fees and price recovery) — **PARTIALLY BROKEN**. That honesty is the product.
 
+**The full thesis** — what would have to be true for NEAR to be a good bet,
+why each of the six bars was set where it was, the volume-vs-value-capture
+contradiction faced head-on, competition and risks — is written out on the
+site itself: [thesis.html](thesis.html) (live:
+https://falsifynear.pages.dev/thesis.html).
+
 ## Why (vs. one-sided thesis dashboards)
 
 Most "thesis" dashboards are marketing: they choose flattering metrics, show
@@ -80,8 +86,25 @@ Claims hash (SHA-256 of claims.txt):
    total})`, so the verdict of record can be checked against the exact
    results that produced it (`get_verdicts` / `verdict_count`).
 
-Contract source: [`contract/falsify-contract.js`](contract/falsify-contract.js) ·
-deploy recipe: [`contract/DEPLOY.md`](contract/DEPLOY.md). The contract stores
+### Verify the official verdict yourself
+
+The official run (2026-11-14 21:20 Dhaka) scored **4 of 6 — PARTIALLY
+BROKEN** and was sealed as verdict #1 (block 277675514, results hash
+`1b5ce91c288174841d825dad4ae3f4b8bdc89f76487dc1edbd0970a147624595`).
+The exact results JSON is published in this repo as
+[`official-results.json`](official-results.json) — check it end-to-end:
+
+- `sha256sum official-results.json` →
+  `1b5ce91c288174841d825dad4ae3f4b8bdc89f76487dc1edbd0970a147624595`
+  (the file is stored byte-exact as the page produced it — no trailing
+  newline; adding one changes the hash, which is precisely the kind of
+  detail a hash seal exists to catch).
+- `near view falsifynear.testnet get_verdicts` → verdict #1 carries the
+  same results hash, `passed: 4`, `total: 6`, recorded by the claims owner
+  at block 277675514 — after the claims seal at block 277671036.
+
+Contract source: [`falsify-contract.js`](falsify-contract.js) ·
+deploy recipe: [`DEPLOY.md`](DEPLOY.md). The contract stores
 **only hashes and counts** — never any document, claim text, or personal data.
 
 ## Architecture
@@ -121,6 +144,16 @@ initializes the field to an empty record object instead of `null`; the
 patched build (code hash `HAcd5RCdvZLU1p5t7BR2x2wfiTLGXqRmnk4EnaKLPZk1`,
 redeploy tx `uQetLtdJvZTSsqVYRRE7zobFKjfY2WQYKYKVxDLABuH`) replaced only the
 code — the sealed record survived untouched and `get_claims` now returns it.
+
+**Second fix (2026-11-14, after an external review panel):** the first build
+let *any* account call `record_verdict`, so unofficial verdicts could have
+polluted the verdict list. `record_verdict` now requires the caller to be
+the claims owner and throws otherwise; verified live by a negative test
+(a non-owner call is rejected) after redeploy. The claims seal and the
+official verdict record survived this redeploy untouched, as before — the
+chronology anchors are the on-chain transactions themselves
+(`register_claims` at block 277671036, verdict at block 277675514), which no
+redeploy can rewrite.
 
 ## Cross-disclosure
 
