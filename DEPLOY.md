@@ -1,6 +1,6 @@
 # FalsifyNEAR contract — deploy plan (runs in GitHub Codespaces)
 
-Contract account: **falsifynear.testnet** (subaccount of imran3360.testnet)
+Contract account: **falsify.imran3360.testnet** (subaccount of imran3360.testnet)
 Claims hash to seal: **0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86**
 (verify any time: `sha256sum claims.txt` in the repo root — it must print exactly this)
 
@@ -28,19 +28,19 @@ This recipe follows the one PROVEN for CleanRoom Seal on 2026-11-13
      differs, use near-cli-rs: `near account create-account create-sub-account`
      or the simplest proven route: from the Codespaces terminal where
      imran3360.testnet credentials already exist (created 2026-11-12):
-     `npx near-cli create-account falsifynear.testnet --masterAccount imran3360.testnet --initialBalance 1`
+     `npx near-cli create-account falsify.imran3360.testnet --masterAccount imran3360.testnet --initialBalance 1`
    - Initial balance 1 test NEAR is plenty (deploy + a few calls).
 5. Deploy:
-   - `npx near-cli deploy falsifynear.testnet build/contract.wasm`
+   - `npx near-cli deploy falsify.imran3360.testnet build/contract.wasm`
 6. Seal the claims — THE chronology step. Do this BEFORE running the live
    test for the official verdict, and before submission:
-   - `npx near-cli call falsifynear.testnet register_claims '{"claims_hash":"0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86"}' --accountId imran3360.testnet`
+   - `npx near-cli call falsify.imran3360.testnet register_claims '{"claims_hash":"0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86"}' --accountId imran3360.testnet`
    - A second register_claims call MUST fail with "claims already registered" —
      that failure is the immutability proof; it is expected and good.
 7. Verify the seal (views — free, no account needed):
-   - `npx near-cli view falsifynear.testnet get_claims`
+   - `npx near-cli view falsify.imran3360.testnet get_claims`
      → returns {owner, claims_hash: 0cac2dad…, block_height, timestamp_ms}
-   - `npx near-cli view falsifynear.testnet verdict_count` → 0
+   - `npx near-cli view falsify.imran3360.testnet verdict_count` → 0
    - Also verify on NearBlocks testnet: methods list shows `register_claims`,
      `record_verdict`, `get_claims`, `get_verdicts`, `verdict_count` — and NO
      method that accepts or returns any claim text, document, or personal data.
@@ -48,8 +48,8 @@ This recipe follows the one PROVEN for CleanRoom Seal on 2026-11-13
      shows MATCH against the SHA-256 it computes from claims.txt itself.
 8. After the official live run on the page: copy the results-hash the page
    displays and seal the verdict (passed/total from the run, e.g. 4 of 6):
-   - `npx near-cli call falsifynear.testnet record_verdict '{"results_hash":"<64hex from page>","passed":4,"total":6}' --accountId imran3360.testnet`
-   - `npx near-cli view falsifynear.testnet verdict_count` → 1
+   - `npx near-cli call falsify.imran3360.testnet record_verdict '{"results_hash":"<64hex from page>","passed":4,"total":6}' --accountId imran3360.testnet`
+   - `npx near-cli view falsify.imran3360.testnet verdict_count` → 1
    - Take the submission screenshot AFTER this, so the page verdict and the
      on-chain record agree.
 

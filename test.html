@@ -410,7 +410,7 @@ async function runTest(){
   document.getElementById("verdictBig").textContent = overall.label;
   document.getElementById("verdictDetail").textContent =
     passed + " of " + CLAIMS.length + " claims passed" +
-    (unv ? " · " + unv + " unverifiable in this run (excluded from the pass count, never guessed)" : "") +
+    (unv ? " · " + unv + " unverifiable in this run (excluded from the pass count, never guessed) — PROVISIONAL verdict: the sealed rule counts passes only, so missing data can never raise a verdict, only lower it" : "") +
     ". Thresholds were sealed before this test ran — the data had the last word.";
 
   const payload = {
