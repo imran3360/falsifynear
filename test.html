@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run the Test — FalsifyNEAR</title>
+<meta name="description" content="Six falsifiable claims about NEAR, thresholds fixed in advance and hash-sealed on NEAR testnet, then re-tested live in your browser against public data. Some of them fail. That is the point.">
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#12161f; --panel2:#171c28; --line:#262e40;
+    --ink:#e8ecf3; --dim:#9aa7bd; --faint:#6b7790;
+    --pass:#3fb97f; --fail:#e5534b; --unv:#d9a13b;
+    --accent:#7cc4ff;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 64px}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:8px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  h1{font-family:var(--serif);font-weight:600;font-size:44px;line-height:1.1;margin:10px 0 6px}
+  h1 em{font-style:italic;color:var(--accent)}
+  .tagline{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--dim);margin:0 0 14px}
+  .builder{font-size:14px;color:var(--faint)}
+  .builder a{color:var(--dim)}
+  .nfa{border:1px solid var(--unv);background:rgba(217,161,59,.08);border-radius:8px;
+       padding:12px 16px;margin-top:18px;font-size:14px}
+  .nfa strong{color:var(--unv);letter-spacing:.06em}
+  section{margin-top:40px}
+  h2{font-family:var(--serif);font-size:27px;font-weight:600;margin:0 0 6px}
+  h2 .no{font-family:var(--mono);font-size:14px;color:var(--accent);margin-right:10px}
+  .sub{color:var(--dim);margin:0 0 16px;font-size:15px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0}
+  .hash{font-family:var(--mono);font-size:13px;word-break:break-all;color:var(--ink)}
+  .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+  .row{margin:12px 0}
+  .badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;
+         padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-pass{color:var(--pass);border-color:var(--pass);background:rgba(63,185,127,.08)}
+  .b-fail{color:var(--fail);border-color:var(--fail);background:rgba(229,83,75,.08)}
+  .b-unv{color:var(--unv);border-color:var(--unv);background:rgba(217,161,59,.08)}
+  .b-wait{color:var(--faint);border-color:var(--faint)}
+  button.run{background:var(--accent);color:#06121f;border:none;border-radius:8px;cursor:pointer;
+             font-size:16px;font-weight:700;padding:13px 26px;margin:6px 0 4px}
+  button.run:disabled{opacity:.45;cursor:default}
+  .claims{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+  .claim{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .claim h3{margin:0 0 4px;font-size:16px;font-weight:600}
+  .claim h3 .cid{font-family:var(--mono);color:var(--accent);margin-right:8px;font-size:14px}
+  .meta{font-size:13px;color:var(--dim)}
+  .meta a{color:var(--dim)}
+  .live{font-family:var(--serif);font-size:26px;margin-top:8px}
+  .live small{font-size:13px;color:var(--faint);font-family:var(--sans)}
+  .verdict{display:none;border-radius:10px;padding:20px 22px;margin-top:18px;border:1px solid}
+  .verdict.show{display:block}
+  .verdict .big{font-family:var(--serif);font-size:30px;margin:2px 0}
+  .v-holds{border-color:var(--pass);background:rgba(63,185,127,.07)}
+  .v-part{border-color:var(--unv);background:rgba(217,161,59,.07)}
+  .v-broken{border-color:var(--fail);background:rgba(229,83,75,.07)}
+  pre.json{background:#0a0d12;border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+           font-family:var(--mono);font-size:12px;overflow:auto;white-space:pre-wrap;word-break:break-word;color:var(--dim)}
+  a{color:var(--accent)}
+  footer{border-top:1px solid var(--line);margin-top:48px;padding-top:22px;font-size:13px;color:var(--faint)}
+  footer p{margin:8px 0}
+  .err{color:var(--fail);font-size:14px}
+  .ok{color:var(--pass)}
+  @media (max-width:560px){ h1{font-size:33px} .live{font-size:22px} }
+</style>
+
+<style>
+  :root{
+    --bg:#07090f; --panel:#0e1220; --panel2:#151b2e; --line:#26304a;
+    --ink:#f0f3fa; --dim:#a7b1c8; --faint:#707b96;
+    --pass:#34d399; --fail:#fb7185; --unv:#fbbf24;
+    --accent:#5eead4; --accent2:#a78bfa;
+  }
+  body{
+    background:
+      radial-gradient(1100px 520px at 85% -10%, rgba(94,234,212,.10), rgba(94,234,212,0) 60%),
+      radial-gradient(900px 520px at -10% 105%, rgba(167,139,250,.10), rgba(167,139,250,0) 60%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+  h1 em{background:linear-gradient(92deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .kicker{background:linear-gradient(92deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .panel,.claim{box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  button.run{background:linear-gradient(92deg,#5eead4,#38bdf8);box-shadow:0 8px 24px rgba(94,234,212,.25)}
+  button.run:hover{filter:brightness(1.07)}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">NEAR Hackathon · Thesis Track · Testnet</div>
+  <h1>Falsify<em>NEAR</em></h1>
+  <p class="tagline">An investment thesis that tries to kill itself.</p>
+  <p class="builder">Built by Imran (<a href="https://github.com/imran3360">github.com/imran3360</a>) ·
+    Contract: <span class="hash" style="font-size:13px">falsifynear.testnet</span> (NEAR testnet)</p>
+  <div class="nfa"><strong>NOT FINANCIAL ADVICE.</strong> This page is a public experiment in falsifiable
+    analysis, not a recommendation to buy, sell, or hold NEAR or any other asset. Figures come from
+    public APIs, change constantly, and can be wrong. Do your own research.</div>
+</header>
+
+<div class="panel" style="border-color:var(--accent)">
+  <div class="label">The full thesis</div>
+  <p style="margin:6px 0">This page is the test. The thesis itself — what would have to be true for
+    NEAR to be a good bet, why each of the six bars below was set where it was, and the
+    volume-vs-value-capture contradiction faced head-on — is written out in full:
+    <a href="index.html"><strong>Read the full thesis →</strong></a></p>
+</div>
+
+<section>
+  <h2><span class="no">01</span>Fixed first, sealed first</h2>
+  <p class="sub">Most thesis dashboards pick their numbers after seeing the data. This one did the opposite:
+    six claims with hard numeric thresholds were written down first, the file was hashed with SHA-256,
+    and that hash was sealed in a NEAR testnet contract that can only ever accept it once. Only then is
+    anything tested. If a claim fails below, nobody quietly edits the threshold — the sealed hash would
+    stop matching, and this page would show it.</p>
+
+  <div class="panel">
+    <div class="row">
+      <div class="label">Claims file — SHA-256 computed in your browser from claims.txt</div>
+      <div class="hash" id="computedHash">computing…</div>
+    </div>
+    <div class="row">
+      <div class="label">Expected hash (fixed when the claims were written)</div>
+      <div class="hash">0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86</div>
+    </div>
+    <div class="row">
+      <div class="label">On-chain record — get_claims() from falsifynear.testnet</div>
+      <div id="sealState">reading contract…</div>
+    </div>
+    <p class="meta" style="margin-top:14px">Verify it yourself: <a href="claims.txt" download>download claims.txt</a>,
+      run <span class="hash" style="font-size:12px">sha256sum claims.txt</span>, and compare with the on-chain
+      record — no trust in this page required.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">02</span>The live test</h2>
+  <p class="sub">Press run. Your browser fetches live figures from public, keyless APIs (DefiLlama,
+    CoinGecko, NEAR mainnet RPC) and judges each claim against the threshold that was sealed above.
+    Nothing is fetched from a server of ours, and a claim whose source cannot be reached is marked
+    UNVERIFIABLE — never guessed, never quietly dropped.</p>
+
+  <button class="run" id="runBtn">Run the test</button>
+  <div id="runNote" class="meta"></div>
+
+  <div class="claims" id="claims"></div>
+
+  <div class="verdict" id="verdictBox">
+    <div class="label">Overall verdict</div>
+    <div class="big" id="verdictBig"></div>
+    <div id="verdictDetail" class="meta" style="color:var(--dim)"></div>
+  </div>
+
+  <div id="resultsWrap" style="display:none">
+    <div class="panel">
+      <div class="label">Results JSON — produced by this run, in your browser</div>
+      <pre class="json" id="resultsJson"></pre>
+      <div class="row">
+        <div class="label">SHA-256 of the results JSON</div>
+        <div class="hash" id="resultsHash">computing…</div>
+      </div>
+      <p class="meta">The builder seals this hash on testnet with the contract's
+        <span class="hash" style="font-size:12px">record_verdict</span> method, so the verdict of record
+        can later be checked against the exact results JSON that produced it.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">03</span>The bear case</h2>
+  <p class="sub">The counter-evidence, stated as plainly as the claims:</p>
+  <div class="panel">
+    <p><strong>Fees are thin.</strong> NEAR's chain fees over the last 30 days come in far below the
+      $250K bar set in claim C3. Whatever the Intents economy is doing, it is not yet paying the chain
+      much in direct fees — the "usage will pay for the chain" story is, today, unproven.</p>
+    <p><strong>Price has not recovered.</strong> NEAR trades roughly 84% below its all-time high, so
+      claim C6 fails outright. Market value (C5) clears its bar on the back of supply and rank, not on
+      price strength — a large market cap and a deeply-drawn-down price are both true at once.</p>
+    <p><strong>TVL clears — barely.</strong> Claim C2 passes by only a few percent. A bad week in DeFi
+      markets flips it, and a thesis that depends on a 3.5% margin is not a strong thesis.</p>
+    <p>Two claims failing tonight is not a bug in this page. It is the system working as designed:
+      the thresholds were fixed before the data was seen, so the data gets the last word.</p>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Data sources:</strong>
+    <a href="https://api.llama.fi/summary/dexs/near-intents">DefiLlama — NEAR Intents volume</a> ·
+    <a href="https://api.llama.fi/v2/chains">DefiLlama — chain TVL</a> ·
+    <a href="https://api.llama.fi/summary/fees/near">DefiLlama — NEAR fees</a> ·
+    <a href="https://www.coingecko.com/en/coins/near">CoinGecko — NEAR market data</a> ·
+    <a href="https://rpc.mainnet.near.org">NEAR mainnet RPC — validators</a> ·
+    Seal: <a href="https://testnet.nearblocks.io/address/falsifynear.testnet">falsifynear.testnet on NearBlocks (testnet)</a>
+  </p>
+  <p><strong>Method:</strong> thresholds were fixed in writing before any verdict was computed; the
+    claims file's SHA-256 was sealed on NEAR testnet in a contract whose claims record is immutable
+    (registering twice is rejected by the contract). Verdicts are computed live in the visitor's
+    browser from the public sources above.</p>
+  <p>FalsifyNEAR is one of two independent NEAR Hackathon entries by the same builder; the other is CleanRoom Seal (github.com/imran3360/cleanroom-seal). Cross-disclosed per hackathon rules.</p>
+  <p><strong>NOT FINANCIAL ADVICE.</strong> Testnet contract; data from public APIs; figures change
+    over time and may be unavailable or wrong. Nothing here is a recommendation to buy, sell, or hold any asset.</p>
+</footer>
+
+</div>
+
+<script>
+"use strict";
+// === CONFIG (single place) ===
+const CONTRACT_ID = "falsifynear.testnet"; // NEAR testnet contract holding the sealed claims hash
+const TESTNET_RPC = "https://rpc.testnet.near.org";
+const EXPECTED_CLAIMS_HASH = "0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86";
+
+// === Claim definitions: thresholds fixed in claims.txt, sealed before testing ===
+const CLAIMS = [
+  { id:"C1", text:"NEAR Intents 30-day swap volume is at least $3.0B",
+    thresholdLabel:"PASS if >= $3.0B", sourceLabel:"DefiLlama · summary/dexs/near-intents",
+    sourceUrl:"https://api.llama.fi/summary/dexs/near-intents",
+    fetchValue: async () => { const d = await getJSON("https://api.llama.fi/summary/dexs/near-intents"); return num(d.total30d); },
+    test: v => v >= 3000000000, format: fmtBigUSD },
+  { id:"C2", text:"NEAR chain TVL is at least $150M",
+    thresholdLabel:"PASS if >= $150M", sourceLabel:"DefiLlama · v2/chains (Near)",
+    sourceUrl:"https://api.llama.fi/v2/chains",
+    fetchValue: async () => { const d = await getJSON("https://api.llama.fi/v2/chains");
+      const row = Array.isArray(d) ? d.find(c => c && c.name === "Near") : null;
+      if (!row) throw new Error("Near row not found"); return num(row.tvl); },
+    test: v => v >= 150000000, format: fmtBigUSD },
+  { id:"C3", text:"NEAR chain fees over 30 days are at least $250K",
+    thresholdLabel:"PASS if >= $250,000", sourceLabel:"DefiLlama · summary/fees/near",
+    sourceUrl:"https://api.llama.fi/summary/fees/near",
+    fetchValue: async () => { const d = await getJSON("https://api.llama.fi/summary/fees/near"); return num(d.total30d); },
+    test: v => v >= 250000, format: fmtUSD },
+  { id:"C4", text:"NEAR mainnet current validator set has at least 300 validators",
+    thresholdLabel:"PASS if >= 300 validators", sourceLabel:"NEAR mainnet RPC · validators",
+    sourceUrl:"https://rpc.mainnet.near.org",
+    fetchValue: async () => { const d = await rpcMainnetValidators();
+      if (!d.result || !Array.isArray(d.result.current_validators)) throw new Error("validators shape unexpected");
+      return d.result.current_validators.length; },
+    test: v => v >= 300, format: v => String(Math.round(v)) },
+  { id:"C5", text:"NEAR market cap is at least $4.0B",
+    thresholdLabel:"PASS if >= $4.0B", sourceLabel:"CoinGecko · coins/markets (near)",
+    sourceUrl:"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near",
+    fetchValue: async () => { const d = await coinGecko(); return num(d.market_cap); },
+    test: v => v >= 4000000000, format: fmtBigUSD },
+  { id:"C6", text:"NEAR price has recovered to within 50% of its all-time high",
+    thresholdLabel:"PASS if ATH change >= -50%", sourceLabel:"CoinGecko · coins/markets (near)",
+    sourceUrl:"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near",
+    fetchValue: async () => { const d = await coinGecko(); return num(d.ath_change_percentage); },
+    test: v => v >= -50, format: v => v.toFixed(1) + "% vs ATH" },
+];
+
+// === Helpers ===
+function num(x){ const n = Number(x); if (!isFinite(n)) throw new Error("value missing or not a number"); return n; }
+async function getJSON(url){
+  const r = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+async function rpcMainnetValidators(){
+  const r = await fetch("https://rpc.mainnet.near.org", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: "falsifynear", method: "validators", params: [null] })
+  });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+let _cgPromise = null;
+function coinGecko(){
+  if (!_cgPromise) _cgPromise = getJSON("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near")
+    .then(d => { if (!Array.isArray(d) || !d[0]) throw new Error("CoinGecko shape unexpected"); return d[0]; });
+  return _cgPromise;
+}
+async function sha256Hex(text){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function fmtBigUSD(v){
+  if (Math.abs(v) >= 1e9) return "$" + (v / 1e9).toFixed(2) + "B";
+  if (Math.abs(v) >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M";
+  if (Math.abs(v) >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
+  return "$" + v.toFixed(0);
+}
+function fmtUSD(v){ return "$" + Math.round(v).toLocaleString("en-US"); }
+function overallFor(passed){
+  if (passed >= 5) return { key: "HOLDS", label: "THESIS HOLDS", cls: "v-holds" };
+  if (passed >= 3) return { key: "PARTIALLY BROKEN", label: "THESIS PARTIALLY BROKEN", cls: "v-part" };
+  return { key: "BROKEN", label: "THESIS BROKEN", cls: "v-broken" };
+}
+
+// === DOM builders (textContent only for any fetched/derived value) ===
+function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+const cards = {};
+function buildCards(){
+  const host = document.getElementById("claims");
+  CLAIMS.forEach(c => {
+    const card = el("div", "claim");
+    const h = el("h3");
+    h.appendChild(el("span", "cid", c.id));
+    h.appendChild(document.createTextNode(c.text));
+    const meta = el("div", "meta");
+    meta.appendChild(document.createTextNode(c.thresholdLabel + " · Source: "));
+    const a = el("a", null, c.sourceLabel); a.href = c.sourceUrl; a.target = "_blank"; a.rel = "noopener";
+    meta.appendChild(a);
+    const live = el("div", "live");
+    const val = el("span", null, "—"); val.id = "val-" + c.id;
+    const badge = el("span", "badge b-wait", "NOT RUN"); badge.id = "badge-" + c.id; badge.style.marginLeft = "12px";
+    live.appendChild(val); live.appendChild(badge);
+    card.appendChild(h); card.appendChild(meta); card.appendChild(live);
+    host.appendChild(card);
+    cards[c.id] = { val, badge };
+  });
+}
+function setBadge(id, kind, text){
+  const b = cards[id].badge;
+  b.className = "badge " + (kind === "PASS" ? "b-pass" : kind === "FAIL" ? "b-fail" : kind === "UNVERIFIABLE" ? "b-unv" : "b-wait");
+  b.textContent = text;
+}
+
+// === Section 1: claims hash + on-chain seal check ===
+async function checkSeal(){
+  const hashEl = document.getElementById("computedHash");
+  const sealEl = document.getElementById("sealState");
+  let computed = null;
+  try {
+    const txt = await (await fetch("claims.txt")).text();
+    computed = await sha256Hex(txt);
+    hashEl.textContent = computed;
+  } catch (e) {
+    hashEl.textContent = "could not load claims.txt from this origin — verify the hash from the repo instead";
+  }
+  try {
+    const argsB64 = btoa(JSON.stringify({}));
+    const r = await fetch(TESTNET_RPC, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: "sealcheck", method: "query",
+        params: { request_type: "call_function", finality: "final",
+          account_id: CONTRACT_ID, method_name: "get_claims", args_base64: argsB64 } })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error("RPC error");
+    const bytes = (d.result && d.result.result) || [];
+    const rec = bytes.length ? JSON.parse(new TextDecoder().decode(new Uint8Array(bytes))) : null;
+    sealEl.textContent = "";
+    if (!rec) {
+      sealEl.appendChild(el("span", "badge b-unv", "SEAL NOT FOUND YET"));
+      sealEl.appendChild(el("div", "meta",
+        "The contract returned no claims record. The seal may not have been made yet — this page will show it here as soon as it exists on testnet."));
+      return;
+    }
+    const match = computed && rec.claims_hash === computed && rec.claims_hash === EXPECTED_CLAIMS_HASH;
+    const badge = el("span", "badge " + (match ? "b-pass" : "b-fail"), match ? "SEALED · MATCH" : "SEALED · MISMATCH");
+    sealEl.appendChild(badge);
+    const when = rec.timestamp_ms ? new Date(Number(rec.timestamp_ms)).toLocaleString("en-GB") : "unknown";
+    const lines = el("div", "meta");
+    lines.appendChild(document.createTextNode("Sealed hash: "));
+    lines.appendChild(el("span", "hash", String(rec.claims_hash)));
+    lines.appendChild(el("br"));
+    lines.appendChild(document.createTextNode("Sealed by " + String(rec.owner || "?") +
+      " · block height " + String(rec.block_height || "?") + " · " + when));
+    if (!match) {
+      lines.appendChild(el("br"));
+      lines.appendChild(el("span", "err",
+        "The on-chain hash does not match the claims file served here — the claims were changed after sealing, or the seal belongs to a different version. Trust the chain, not this page."));
+    }
+    sealEl.appendChild(lines);
+  } catch (e) {
+    sealEl.textContent = "";
+    sealEl.appendChild(el("span", "badge b-unv", "SEAL NOT FOUND YET"));
+    sealEl.appendChild(el("div", "meta",
+      "The testnet contract could not be read just now (it may not be deployed yet, or the RPC is unreachable). No seal is claimed here until the chain itself answers."));
+  }
+}
+
+// === Section 2: the live test ===
+let running = false;
+async function runTest(){
+  if (running) return;
+  running = true;
+  const btn = document.getElementById("runBtn");
+  btn.disabled = true; btn.textContent = "Testing…";
+  document.getElementById("runNote").textContent = "Fetching live data from DefiLlama, CoinGecko and NEAR mainnet RPC…";
+  CLAIMS.forEach(c => { cards[c.id].val.textContent = "…"; setBadge(c.id, "WAIT", "TESTING"); });
+
+  const results = await Promise.all(CLAIMS.map(async c => {
+    try {
+      const v = await c.fetchValue();
+      const verdict = c.test(v) ? "PASS" : "FAIL";
+      cards[c.id].val.textContent = c.format(v);
+      setBadge(c.id, verdict, verdict);
+      return { id: c.id, value: v, verdict };
+    } catch (e) {
+      cards[c.id].val.textContent = "unavailable";
+      setBadge(c.id, "UNVERIFIABLE", "UNVERIFIABLE");
+      return { id: c.id, value: null, verdict: "UNVERIFIABLE" };
+    }
+  }));
+
+  const passed = results.filter(r => r.verdict === "PASS").length;
+  const unv = results.filter(r => r.verdict === "UNVERIFIABLE").length;
+  const overall = overallFor(passed);
+
+  const box = document.getElementById("verdictBox");
+  box.className = "verdict show " + overall.cls;
+  document.getElementById("verdictBig").textContent = overall.label;
+  document.getElementById("verdictDetail").textContent =
+    passed + " of " + CLAIMS.length + " claims passed" +
+    (unv ? " · " + unv + " unverifiable in this run (excluded from the pass count, never guessed)" : "") +
+    ". Thresholds were sealed before this test ran — the data had the last word.";
+
+  const payload = {
+    project: "FalsifyNEAR", claims_hash: EXPECTED_CLAIMS_HASH,
+    tested_at: new Date().toISOString(),
+    results: results.map(r => ({ id: r.id, value: r.value, verdict: r.verdict })),
+    passed, total: CLAIMS.length, overall: overall.key
+  };
+  const jsonText = JSON.stringify(payload, null, 2);
+  document.getElementById("resultsJson").textContent = jsonText;
+  document.getElementById("resultsWrap").style.display = "block";
+  document.getElementById("resultsHash").textContent = await sha256Hex(jsonText);
+
+  document.getElementById("runNote").textContent = "Run complete. Figures are live as of this moment and will move.";
+  btn.disabled = false; btn.textContent = "Run the test again";
+  running = false;
+}
+
+buildCards();
+document.getElementById("runBtn").addEventListener("click", runTest);
+checkSeal();
+</script>
+</body>
+</html>

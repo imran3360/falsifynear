@@ -29,8 +29,9 @@ On the night this was built, the live data said: 4 pass, 2 fail
 **The full thesis** — what would have to be true for NEAR to be a good bet,
 why each of the six bars was set where it was, the volume-vs-value-capture
 contradiction faced head-on, competition and risks — is written out on the
-site itself: [thesis.html](thesis.html) (live:
-https://falsifynear.pages.dev/thesis.html).
+site itself — the dashboard at https://falsifynear.pages.dev **is** the
+thesis (home page, 11 sections); the live falsification test runs at
+https://falsifynear.pages.dev/test.html.
 
 ## Why (vs. one-sided thesis dashboards)
 

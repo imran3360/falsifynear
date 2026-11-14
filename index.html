@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FalsifyNEAR — An investment thesis that tries to kill itself</title>
-<meta name="description" content="Six falsifiable claims about NEAR, thresholds fixed in advance and hash-sealed on NEAR testnet, then re-tested live in your browser against public data. Some of them fail. That is the point.">
+<meta name="description" content="The full NEAR investment thesis behind FalsifyNEAR, as a dashboard: the thesis, why each of the six sealed bars was set where it was, the value-capture contradiction, competition and risks, the official scoreboard, and how to verify every hash yourself.">
 <style>
   :root{
     --bg:#0b0e13; --panel:#12161f; --panel2:#171c28; --line:#262e40;
@@ -17,399 +17,574 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6}
-  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 64px}
-  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:8px}
+  a{color:var(--accent)}
+  .layout{display:flex;min-height:100vh}
+  /* === Sidebar === */
+  .side{width:228px;flex:0 0 228px;border-right:1px solid var(--line);background:var(--panel);
+        padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+  .brand{font-family:var(--serif);font-size:23px;font-weight:600;margin:2px 6px 2px}
+  .brand em{font-style:italic;color:var(--accent)}
+  .brandsub{font-size:12px;color:var(--faint);margin:0 6px 16px}
+  .navbtn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:1px solid transparent;
+          color:var(--dim);font-size:15px;padding:9px 10px;border-radius:8px;cursor:pointer;margin:2px 0;font-family:var(--sans)}
+  .navbtn .ic{font-family:var(--mono);font-size:12px;color:var(--faint);width:20px;text-align:center}
+  .navbtn:hover{background:var(--panel2);color:var(--ink)}
+  .navbtn.on{background:var(--panel2);color:var(--ink);border-color:var(--line)}
+  .navbtn.on .ic{color:var(--accent)}
+  .side .foot{margin-top:22px;padding:12px 6px;border-top:1px solid var(--line);font-size:12px;color:var(--faint)}
+  /* === Main === */
+  .main{flex:1;min-width:0;padding:26px 30px 60px;max-width:1020px}
   .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-  h1{font-family:var(--serif);font-weight:600;font-size:44px;line-height:1.1;margin:10px 0 6px}
-  h1 em{font-style:italic;color:var(--accent)}
-  .tagline{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--dim);margin:0 0 14px}
-  .builder{font-size:14px;color:var(--faint)}
-  .builder a{color:var(--dim)}
-  .nfa{border:1px solid var(--unv);background:rgba(217,161,59,.08);border-radius:8px;
-       padding:12px 16px;margin-top:18px;font-size:14px}
-  .nfa strong{color:var(--unv);letter-spacing:.06em}
-  section{margin-top:40px}
-  h2{font-family:var(--serif);font-size:27px;font-weight:600;margin:0 0 6px}
-  h2 .no{font-family:var(--mono);font-size:14px;color:var(--accent);margin-right:10px}
+  h1{font-family:var(--serif);font-weight:600;font-size:36px;line-height:1.15;margin:8px 0 6px}
+  h2{font-family:var(--serif);font-size:25px;font-weight:600;margin:0 0 8px}
   .sub{color:var(--dim);margin:0 0 16px;font-size:15px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0}
+  .panel p{margin:10px 0}
+  .nfa{border:1px solid var(--unv);background:rgba(217,161,59,.08);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:14px}
+  .nfa strong{color:var(--unv);letter-spacing:.06em}
   .hash{font-family:var(--mono);font-size:13px;word-break:break-all;color:var(--ink)}
   .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
-  .row{margin:12px 0}
-  .badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;
-         padding:3px 10px;border-radius:999px;border:1px solid}
+  .badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:999px;border:1px solid}
   .b-pass{color:var(--pass);border-color:var(--pass);background:rgba(63,185,127,.08)}
   .b-fail{color:var(--fail);border-color:var(--fail);background:rgba(229,83,75,.08)}
   .b-unv{color:var(--unv);border-color:var(--unv);background:rgba(217,161,59,.08)}
-  .b-wait{color:var(--faint);border-color:var(--faint)}
-  button.run{background:var(--accent);color:#06121f;border:none;border-radius:8px;cursor:pointer;
-             font-size:16px;font-weight:700;padding:13px 26px;margin:6px 0 4px}
-  button.run:disabled{opacity:.45;cursor:default}
-  .claims{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
-  .claim{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
-  .claim h3{margin:0 0 4px;font-size:16px;font-weight:600}
-  .claim h3 .cid{font-family:var(--mono);color:var(--accent);margin-right:8px;font-size:14px}
-  .meta{font-size:13px;color:var(--dim)}
-  .meta a{color:var(--dim)}
-  .live{font-family:var(--serif);font-size:26px;margin-top:8px}
-  .live small{font-size:13px;color:var(--faint);font-family:var(--sans)}
-  .verdict{display:none;border-radius:10px;padding:20px 22px;margin-top:18px;border:1px solid}
-  .verdict.show{display:block}
-  .verdict .big{font-family:var(--serif);font-size:30px;margin:2px 0}
-  .v-holds{border-color:var(--pass);background:rgba(63,185,127,.07)}
-  .v-part{border-color:var(--unv);background:rgba(217,161,59,.07)}
-  .v-broken{border-color:var(--fail);background:rgba(229,83,75,.07)}
-  pre.json{background:#0a0d12;border:1px solid var(--line);border-radius:8px;padding:14px 16px;
-           font-family:var(--mono);font-size:12px;overflow:auto;white-space:pre-wrap;word-break:break-word;color:var(--dim)}
-  a{color:var(--accent)}
-  footer{border-top:1px solid var(--line);margin-top:48px;padding-top:22px;font-size:13px;color:var(--faint)}
+  .view{display:none}
+  .view.on{display:block}
+  /* at-a-glance cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card .v{font-family:var(--serif);font-size:25px;margin:2px 0}
+  .card .s{font-size:12px;color:var(--faint)}
+  .verdictbox{border:1px solid var(--unv);background:rgba(217,161,59,.07);border-radius:10px;padding:18px 20px;margin:14px 0}
+  .verdictbox .big{font-family:var(--serif);font-size:29px;margin:2px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+  .cid{font-family:var(--mono);color:var(--accent);font-weight:700}
+  .cta{display:block;text-align:center;background:var(--panel2);border:1px solid var(--accent);border-radius:10px;
+       padding:16px 20px;margin:20px 0;font-size:16px;text-decoration:none}
+  footer{border-top:1px solid var(--line);margin-top:44px;padding-top:20px;font-size:13px;color:var(--faint)}
   footer p{margin:8px 0}
-  .err{color:var(--fail);font-size:14px}
-  .ok{color:var(--pass)}
-  @media (max-width:560px){ h1{font-size:33px} .live{font-size:22px} }
+  @media (max-width:760px){
+    .layout{flex-direction:column}
+    .side{width:100%;flex:none;height:auto;position:static;border-right:none;border-bottom:1px solid var(--line)}
+    .side .foot{display:none}
+    .main{padding:20px 16px 48px}
+    h1{font-size:29px}
+  }
+</style>
+
+<style>
+  :root{
+    --bg:#07090f; --panel:#0e1220; --panel2:#151b2e; --line:#26304a;
+    --ink:#f0f3fa; --dim:#a7b1c8; --faint:#707b96;
+    --pass:#34d399; --fail:#fb7185; --unv:#fbbf24;
+    --accent:#5eead4; --accent2:#a78bfa;
+  }
+  body{
+    background:
+      radial-gradient(1100px 520px at 85% -10%, rgba(94,234,212,.10), rgba(94,234,212,0) 60%),
+      radial-gradient(900px 520px at -10% 105%, rgba(167,139,250,.10), rgba(167,139,250,0) 60%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+  .side{background:rgba(10,13,24,.88);backdrop-filter:blur(6px)}
+  .brand em{background:linear-gradient(92deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .navbtn{transition:all .15s ease}
+  .navbtn.on{background:linear-gradient(90deg, rgba(94,234,212,.14), rgba(167,139,250,.10));border-color:var(--line);box-shadow:inset 3px 0 0 var(--accent)}
+  .panel,.card{box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .card{transition:border-color .15s ease, transform .15s ease}
+  .card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .card .v{background:linear-gradient(92deg,#ffffff, #c9f7ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .verdictbox{border-color:var(--unv);box-shadow:0 0 0 1px rgba(251,191,36,.25), 0 14px 40px rgba(251,191,36,.08)}
+  .cta{background:linear-gradient(92deg, rgba(94,234,212,.16), rgba(167,139,250,.16));transition:all .15s ease}
+  .cta:hover{border-color:var(--accent2);transform:translateY(-1px)}
+  .kicker{background:linear-gradient(92deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  th{color:var(--accent)}
+  .badge{backdrop-filter:blur(2px)}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="layout">
 
-<header>
-  <div class="kicker">NEAR Hackathon · Thesis Track · Testnet</div>
-  <h1>Falsify<em>NEAR</em></h1>
-  <p class="tagline">An investment thesis that tries to kill itself.</p>
-  <p class="builder">Built by Imran (<a href="https://github.com/imran3360">github.com/imran3360</a>) ·
-    Contract: <span class="hash" style="font-size:13px">falsifynear.testnet</span> (NEAR testnet)</p>
-  <div class="nfa"><strong>NOT FINANCIAL ADVICE.</strong> This page is a public experiment in falsifiable
-    analysis, not a recommendation to buy, sell, or hold NEAR or any other asset. Figures come from
-    public APIs, change constantly, and can be wrong. Do your own research.</div>
-</header>
+<aside class="side">
+  <div class="brand">Falsify<em>NEAR</em></div>
+  <p class="brandsub">The thesis, in full · NEAR Hackathon · Thesis Track</p>
+  <button class="navbtn on" data-v="overview"><span class="ic">01</span>Overview</button>
+  <button class="navbtn" data-v="thesis"><span class="ic">02</span>The Thesis</button>
+  <button class="navbtn" data-v="bars"><span class="ic">03</span>Why These Bars</button>
+  <button class="navbtn" data-v="value"><span class="ic">04</span>Value Capture</button>
+  <button class="navbtn" data-v="supply"><span class="ic">05</span>Supply</button>
+  <button class="navbtn" data-v="valuation"><span class="ic">06</span>Valuation</button>
+  <button class="navbtn" data-v="risks"><span class="ic">07</span>Competition &amp; Risks</button>
+  <button class="navbtn" data-v="news"><span class="ic">08</span>Latest News</button>
+  <button class="navbtn" data-v="score"><span class="ic">09</span>Scoreboard</button>
+  <button class="navbtn" data-v="queries"><span class="ic">10</span>Queries &amp; Methods</button>
+  <button class="navbtn" data-v="verify"><span class="ic">11</span>Verify It Yourself</button>
+  <div class="foot">
+    <p>Test page: <a href="test.html">run the live test →</a></p>
+    <p>Built by Imran · <a href="https://github.com/imran3360/falsifynear">GitHub repo</a></p>
+    <p>Contract: falsifynear.testnet (NEAR testnet)</p>
+  </div>
+</aside>
 
-<div class="panel" style="border-color:var(--accent)">
-  <div class="label">The full thesis</div>
-  <p style="margin:6px 0">This page is the test. The thesis itself — what would have to be true for
-    NEAR to be a good bet, why each of the six bars below was set where it was, and the
-    volume-vs-value-capture contradiction faced head-on — is written out in full:
-    <a href="thesis.html"><strong>Read the full thesis →</strong></a></p>
-</div>
+<main class="main">
 
-<section>
-  <h2><span class="no">01</span>Fixed first, sealed first</h2>
-  <p class="sub">Most thesis dashboards pick their numbers after seeing the data. This one did the opposite:
-    six claims with hard numeric thresholds were written down first, the file was hashed with SHA-256,
-    and that hash was sealed in a NEAR testnet contract that can only ever accept it once. Only then is
-    anything tested. If a claim fails below, nobody quietly edits the threshold — the sealed hash would
-    stop matching, and this page would show it.</p>
+<!-- ================= 01 OVERVIEW ================= -->
+<section class="view on" id="v-overview">
+  <div class="kicker">Overview</div>
+  <h1>The NEAR thesis — and the test it set itself</h1>
+  <p class="sub">Most thesis dashboards are built to be believed. This one is built to be
+  <strong>checked</strong>: the thesis is stated in full, its six pass/fail bars were fixed and
+  hash-sealed on NEAR testnet <em>before</em> any data was consulted for a verdict, and the official
+  run is published with its receipts. The verdict was not kind. That is the point.</p>
 
+  <div class="nfa"><strong>NOT FINANCIAL ADVICE.</strong> A public experiment in falsifiable analysis —
+  not a recommendation to buy, sell, or hold NEAR or any other asset. Figures come from public APIs,
+  change constantly, and can be wrong. Do your own research.</div>
+
+  <div class="cards">
+    <div class="card"><div class="label">NEAR price (live)</div><div class="v" id="gPrice">…</div><div class="s" id="gPriceSub">CoinGecko</div></div>
+    <div class="card"><div class="label">Market cap (live)</div><div class="v" id="gCap">…</div><div class="s">CoinGecko · bar: ≥ $4.0B (C5)</div></div>
+    <div class="card"><div class="label">Intents volume, 30d (live)</div><div class="v" id="gIntents">…</div><div class="s">DefiLlama · bar: ≥ $3.0B (C1)</div></div>
+    <div class="card"><div class="label">Chain fees, 30d (live)</div><div class="v" id="gFees">…</div><div class="s">DefiLlama · bar: ≥ $250K (C3)</div></div>
+  </div>
+  <p class="sub" style="font-size:13px">Live cards fetch in your browser from the same public sources the test uses;
+  if a source is unreachable the card says so instead of guessing. The verdict below is the dated
+  <strong>official run</strong>, not a live score — live figures move, the sealed record does not.</p>
+
+  <div class="verdictbox">
+    <div class="label">Verdict of record — official run, 14 Nov 2026, 21:20 Dhaka</div>
+    <div class="big">4 of 6 — THESIS PARTIALLY BROKEN</div>
+    <p style="margin:6px 0">Intents volume, TVL, validators and market cap held. Fees and price
+    recovery failed. Claims sealed on-chain at block 277671036 <em>before</em> the run; this verdict
+    sealed at block 277675514 <em>after</em> it. Full detail in <a href="#" data-go="score">Scoreboard</a>.</p>
+  </div>
+
+  <a class="cta" href="test.html">Run the test yourself — live, in your browser →</a>
+</section>
+
+<!-- ================= 02 THE THESIS ================= -->
+<section class="view" id="v-thesis">
+  <div class="kicker">02 · The Thesis</div>
+  <h2>What would have to be true</h2>
   <div class="panel">
-    <div class="row">
-      <div class="label">Claims file — SHA-256 computed in your browser from claims.txt</div>
-      <div class="hash" id="computedHash">computing…</div>
-    </div>
-    <div class="row">
-      <div class="label">Expected hash (fixed when the claims were written)</div>
-      <div class="hash">0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86</div>
-    </div>
-    <div class="row">
-      <div class="label">On-chain record — get_claims() from falsifynear.testnet</div>
-      <div id="sealState">reading contract…</div>
-    </div>
-    <p class="meta" style="margin-top:14px">Verify it yourself: <a href="claims.txt" download>download claims.txt</a>,
-      run <span class="hash" style="font-size:12px">sha256sum claims.txt</span>, and compare with the on-chain
-      record — no trust in this page required.</p>
+    <p>NEAR's bet is that the winning layer of crypto is not another fast chain, but
+    <strong>chain abstraction</strong>: users state an intent, and a network of solvers executes it
+    across chains without the user caring which chain did the work. If that bet is right, three
+    things should be visibly true at the same time: the Intents economy should already move
+    <strong>real money at real scale</strong>; the underlying chain should still show
+    <strong>independent signs of life</strong> (DeFi depth, decentralization, fees); and the token
+    should be <strong>large enough to matter</strong> — while its price, still far below the last
+    cycle's high, leaves room if the first two keep compounding.</p>
+    <p>That is the bull case, stated as strongly as it can honestly be stated. Its deliberate design
+    choice: it separates <em>usage being real</em> from <em>value reaching the token</em>, because
+    those are different claims with different evidence — and right now, the first largely holds
+    while the second fails. A thesis that cannot say which of its legs is broken is marketing;
+    this one is built so the data assigns the blame.</p>
+    <p>The six claims operationalize the thesis: C1 tests the Intents economy, C2–C4 test the chain
+    underneath it, C5–C6 test what the market currently believes. Each has a hard numeric bar,
+    fixed in <span class="hash" style="font-size:12px">claims.txt</span> and sealed before testing —
+    the next section explains why each bar sits where it does.</p>
   </div>
 </section>
 
-<section>
-  <h2><span class="no">02</span>The live test</h2>
-  <p class="sub">Press run. Your browser fetches live figures from public, keyless APIs (DefiLlama,
-    CoinGecko, NEAR mainnet RPC) and judges each claim against the threshold that was sealed above.
-    Nothing is fetched from a server of ours, and a claim whose source cannot be reached is marked
-    UNVERIFIABLE — never guessed, never quietly dropped.</p>
-
-  <button class="run" id="runBtn">Run the test</button>
-  <div id="runNote" class="meta"></div>
-
-  <div class="claims" id="claims"></div>
-
-  <div class="verdict" id="verdictBox">
-    <div class="label">Overall verdict</div>
-    <div class="big" id="verdictBig"></div>
-    <div id="verdictDetail" class="meta" style="color:var(--dim)"></div>
-  </div>
-
-  <div id="resultsWrap" style="display:none">
-    <div class="panel">
-      <div class="label">Results JSON — produced by this run, in your browser</div>
-      <pre class="json" id="resultsJson"></pre>
-      <div class="row">
-        <div class="label">SHA-256 of the results JSON</div>
-        <div class="hash" id="resultsHash">computing…</div>
-      </div>
-      <p class="meta">The builder seals this hash on testnet with the contract's
-        <span class="hash" style="font-size:12px">record_verdict</span> method, so the verdict of record
-        can later be checked against the exact results JSON that produced it.</p>
-    </div>
+<!-- ================= 03 WHY THESE BARS ================= -->
+<section class="view" id="v-bars">
+  <div class="kicker">03 · Why These Bars</div>
+  <h2>Every threshold, justified — before the data spoke</h2>
+  <p class="sub">A bar set after seeing the data proves nothing. These were written into
+  claims.txt, hashed (SHA-256 <span class="hash" style="font-size:12px">0cac2dad…e09d86</span>) and
+  sealed on testnet first. Each bar also states what it is meant to distinguish.</p>
+  <table>
+    <tr><th>Claim</th><th>The bar</th><th>Why this level</th></tr>
+    <tr><td><span class="cid">C1</span> Intents volume</td><td>≥ $3.0B / 30 days</td>
+      <td>The scale test. Serious cross-chain execution flow is measured in billions per month;
+      below ~$1B the Intents story would be a niche experiment, not an economy. $3B separates
+      "material" from "marginal".</td></tr>
+    <tr><td><span class="cid">C2</span> Chain TVL</td><td>≥ $150M</td>
+      <td>The DeFi relevance floor. Chains under ~$100M of TVL are, in practice, DeFi-irrelevant.
+      $150M is a deliberately <em>modest</em> bar — "DeFi exists here at real scale", nothing more.
+      It currently passes by ~3%, which this page counts as a weakness of the thesis, not a strength.</td></tr>
+    <tr><td><span class="cid">C3</span> Chain fees</td><td>≥ $250K / 30 days</td>
+      <td>The value-capture floor — the minimum at which "usage pays the chain" stops being a slogan.
+      Honesty built into the bar: even passing it (~$3M annualized) against a ~$4B market cap would be
+      a price-to-fees multiple in the thousands, so a pass would <em>not</em> prove value capture; it
+      would only prove fees are non-trivial. A fail — which is what happened — proves they are not
+      yet even that.</td></tr>
+    <tr><td><span class="cid">C4</span> Validators</td><td>≥ 300 current validators</td>
+      <td>The decentralization floor for the mainnet validator set, read directly from NEAR RPC.
+      Stated limit: the count includes chunk-only producers and says nothing about stake
+      concentration (a Nakamoto-coefficient test would be stricter). A floor, not a certificate.</td></tr>
+    <tr><td><span class="cid">C5</span> Market cap</td><td>≥ $4.0B</td>
+      <td>The relevance test: does the market still price NEAR as a large-cap asset, or has it been
+      abandoned to small-cap territory? $4B keeps it in the large-cap set.</td></tr>
+    <tr><td><span class="cid">C6</span> Price recovery</td><td>Within 50% of ATH</td>
+      <td>The re-rating test. A thesis claiming the market is re-pricing NEAR upward should show the
+      price at least halfway back to its all-time high. At ~−84% it cannot — the claim the bull case
+      most wants to avoid, which is exactly why it is here.</td></tr>
+  </table>
+  <div class="panel">
+    <p><strong>A correlation, disclosed rather than hidden:</strong> C5 and C6 are both derived from
+    price (market cap is price × supply), so the six claims are not six fully independent tests —
+    one large price move can move two votes. They are kept separate because they test different
+    things — absolute scale (C5) versus recovery (C6) — and the official run shows why the
+    distinction matters: C5 passed on supply and rank while C6 failed on the same drawdown. But a
+    reader weighing the verdict should know the overlap exists. It is stated here, in the thesis
+    itself, not discovered by critics later.</p>
   </div>
 </section>
 
-<section>
-  <h2><span class="no">03</span>The bear case</h2>
-  <p class="sub">The counter-evidence, stated as plainly as the claims:</p>
+<!-- ================= 04 VALUE CAPTURE ================= -->
+<section class="view" id="v-value">
+  <div class="kicker">04 · Value Capture</div>
+  <h2>The contradiction, head-on: volume is not value capture</h2>
   <div class="panel">
-    <p><strong>Fees are thin.</strong> NEAR's chain fees over the last 30 days come in far below the
-      $250K bar set in claim C3. Whatever the Intents economy is doing, it is not yet paying the chain
-      much in direct fees — the "usage will pay for the chain" story is, today, unproven.</p>
-    <p><strong>Price has not recovered.</strong> NEAR trades roughly 84% below its all-time high, so
-      claim C6 fails outright. Market value (C5) clears its bar on the back of supply and rank, not on
-      price strength — a large market cap and a deeply-drawn-down price are both true at once.</p>
-    <p><strong>TVL clears — barely.</strong> Claim C2 passes by only a few percent. A bad week in DeFi
-      markets flips it, and a thesis that depends on a 3.5% margin is not a strong thesis.</p>
-    <p>Two claims failing tonight is not a bug in this page. It is the system working as designed:
-      the thresholds were fixed before the data was seen, so the data gets the last word.</p>
+    <p>The official run produced the most interesting pair of numbers in this project:
+    <strong>$3.797B</strong> of Intents volume in 30 days (C1, pass) next to
+    <strong>$129,456</strong> of chain fees in 30 days (C3, fail — about half its bar). Both numbers
+    are true at once, and the gap between them <em>is</em> the current state of the NEAR thesis.</p>
+    <p>Why the gap exists: Intents volume is gross solver flow, much of it cross-chain — a swap can
+    be an "Intents" trade without settling as fee-paying NEAR L1 activity. Volume measures that the
+    machine is being used; fees measure whether the chain and its token are being paid for that use.
+    Annualized, the run's fees are a ~$1.6M run-rate against a $4.22B market cap — a price-to-fees
+    multiple of roughly 2,700×. No framing makes that cheap. For the token thesis to work, Intents
+    economics — fees taken in traded assets, demand for NEAR-denominated settlement and staking —
+    must eventually show up in C3-type numbers. Today they do not.</p>
+    <p><strong>What would change this verdict:</strong> a later run, against the same sealed
+    thresholds, in which C3 crosses $250K/30d while C1 holds — that is the signature of value
+    capture arriving, and because the thresholds cannot be edited, nobody gets to move the bar when
+    it happens. What would kill the thesis outright: C1 decaying below its bar, or C2 flipping in a
+    routine DeFi drawdown — either turns PARTIALLY BROKEN into BROKEN, in public, with the receipts
+    sealed.</p>
   </div>
+</section>
+
+
+<!-- ================= 05 SUPPLY ================= -->
+<section class="view" id="v-supply">
+  <div class="kicker">05 · Supply</div>
+  <h2>How much NEAR exists — live</h2>
+  <p class="sub">Supply is the quiet half of every token thesis: demand stories mean little if
+  issuance dilutes holders faster than fees and burns offset it. These figures fetch live from
+  CoinGecko in your browser; the interpretation below is fixed text and does not move with them.</p>
+  <div class="cards">
+    <div class="card"><div class="label">Circulating supply</div><div class="v" id="sCirc">…</div><div class="s">CoinGecko · circulating_supply</div></div>
+    <div class="card"><div class="label">Total supply</div><div class="v" id="sTotal">…</div><div class="s">CoinGecko · total_supply</div></div>
+    <div class="card"><div class="label">Max supply</div><div class="v" id="sMax">…</div><div class="s">CoinGecko · max_supply</div></div>
+    <div class="card"><div class="label">Circulating share</div><div class="v" id="sPct">…</div><div class="s">circulating ÷ total, computed here</div></div>
+  </div>
+  <div class="panel">
+    <p><strong>Why supply belongs in a falsifiable thesis:</strong> NEAR has no hard supply cap, so
+    new issuance is a standing headwind that real fee revenue has to outrun before holders gain
+    anything. That is exactly what claim C3 watches from the other side: if chain fees stay at the
+    official run's ~$129K/30d level while supply keeps growing, the token's claim on the network's
+    economics weakens every month — no narrative required, just arithmetic.</p>
+    <p>What would strengthen the thesis on this page: fees (C3) rising through their sealed bar, or
+    a sustained period where fee burns visibly offset issuance. Neither is asserted here; both are
+    checkable against the same public sources, which is the standard this project holds itself to.</p>
+  </div>
+</section>
+
+<!-- ================= 06 VALUATION ================= -->
+<section class="view" id="v-valuation">
+  <div class="kicker">06 · Valuation</div>
+  <h2>The multiples, computed in your browser — formulas shown</h2>
+  <p class="sub">No black boxes: every figure below is computed live from the same keyless sources
+  as the test, and the formula is printed next to it. If a source is unreachable, the row says
+  "unavailable" — a missing number is never replaced with a flattering one.</p>
+  <table>
+    <tr><th>Metric</th><th>Live value</th><th>Formula</th></tr>
+    <tr><td>Market cap</td><td id="valCap">…</td><td>CoinGecko <span class="hash" style="font-size:12px">market_cap</span> (price × circulating supply)</td></tr>
+    <tr><td>Fully diluted valuation</td><td id="valFdv">…</td><td>price × total supply (both CoinGecko)</td></tr>
+    <tr><td>Price-to-fees (annualized)</td><td id="valPF">…</td><td>market cap ÷ (30d chain fees × 12) — DefiLlama fees</td></tr>
+    <tr><td>Chain fees as % of Intents volume</td><td id="valTake">…</td><td>30d chain fees ÷ 30d Intents volume — shown for scale only: Intents flow is largely cross-chain, so this is <em>not</em> a protocol take rate; it measures how little of the flow the chain itself captures</td></tr>
+    <tr><td>TVL ÷ market cap</td><td id="valTvl">…</td><td>DefiLlama chain TVL ÷ CoinGecko market cap</td></tr>
+    <tr><td>Drawdown from all-time high</td><td id="valAth">…</td><td>CoinGecko <span class="hash" style="font-size:12px">ath_change_percentage</span> — C6's raw input (bar: ≥ −50%)</td></tr>
+  </table>
+  <div class="panel">
+    <p><strong>Reading the official run through this lens:</strong> at the run, price-to-fees was
+    roughly <strong>2,700×</strong> ($4.22B cap against a ~$1.6M annualized fee run-rate). By any
+    conventional standard that is not "cheap" — it is a price that already assumes the value-capture
+    problem gets solved. The bull case therefore cannot be "the market is giving NEAR away"; it has
+    to be "Intents keeps compounding until the fees follow". That is a growth claim, and C1/C3 are
+    exactly the pair of sealed claims that will grade it over time.</p>
+  </div>
+</section>
+
+<!-- ================= 07 COMPETITION & RISKS ================= -->
+<section class="view" id="v-risks">
+  <div class="kicker">07 · Competition &amp; Risks</div>
+  <h2>Where this thesis loses</h2>
+  <div class="panel">
+    <p><strong>Competition.</strong> Solana and the major Ethereum L2s dominate current fee revenue
+    and developer mindshare; on a pure "who gets paid today" comparison, NEAR loses, and C3's failure
+    is that fact measured rather than argued. NEAR's counter-position is architectural: intents and
+    chain abstraction aim at the layer <em>above</em> any single chain, plus a serious AI-agent
+    angle (agent identity and payments need exactly this kind of intent infrastructure). That is a
+    bet on where value moves next, not a claim about where it sits today.</p>
+    <p><strong>Risks, plainly.</strong> (1) Execution-layer value may accrue to solvers and
+    applications rather than the L1 token — the C1/C3 gap is precisely this risk, already visible.
+    (2) TVL's ~3% margin means one bad DeFi week flips C2. (3) Price at −84% from ATH may reflect
+    durable market judgment, not mispricing. (4) All figures here ride on third-party aggregators
+    (DefiLlama, CoinGecko) whose methodologies can change; every figure links to its source and
+    unreachable data is marked UNVERIFIABLE rather than guessed. (5) This is a snapshot method:
+    spot values, no time-averaging — near-threshold claims can flip between runs, which is why the
+    verdict of record is a single dated, sealed run and not a live "score".</p>
+  </div>
+</section>
+
+
+<!-- ================= 08 LATEST NEWS ================= -->
+<section class="view" id="v-news">
+  <div class="kicker">08 · Latest News</div>
+  <h2>Latest NEAR headlines — live, with the receipts caveat</h2>
+  <p class="sub">Headlines are fetched live from the GDELT news index when you open this page.
+  News is context, never evidence: nothing here can change a sealed claim or the verdict of record,
+  and a headline is a claim by its publisher, not a fact established by this project. If the feed is
+  unreachable, the source links below still take you to the coverage directly.</p>
+  <div class="panel">
+    <div class="label">Live headlines (GDELT)</div>
+    <div id="newsList"><p class="sub" style="margin:6px 0">Fetching headlines…</p></div>
+  </div>
+  <div class="panel">
+    <div class="label">Go to the sources</div>
+    <p style="margin:6px 0">
+      <a href="https://near.org/blog" target="_blank" rel="noopener">NEAR Blog (official)</a> ·
+      <a href="https://www.coindesk.com/tag/near-protocol/" target="_blank" rel="noopener">CoinDesk — NEAR Protocol</a> ·
+      <a href="https://www.theblock.co/search?q=NEAR%20Protocol" target="_blank" rel="noopener">The Block — NEAR search</a> ·
+      <a href="https://news.google.com/search?q=NEAR%20Protocol%20crypto" target="_blank" rel="noopener">Google News — NEAR Protocol</a> ·
+      <a href="https://x.com/search?q=%24NEAR%20OR%20NEAR%20Protocol&amp;f=live" target="_blank" rel="noopener">X — live $NEAR posts</a>
+    </p>
+  </div>
+</section>
+
+<!-- ================= 09 SCOREBOARD ================= -->
+<section class="view" id="v-score">
+  <div class="kicker">09 · Scoreboard</div>
+  <h2>Official run — 14 Nov 2026, 21:20 Dhaka (15:20 UTC)</h2>
+  <p class="sub">Run on the live test page against the thresholds sealed earlier that day. Any
+  visitor's run today may differ — figures move. This run is the verdict of record because its
+  results hash is the one sealed on-chain.</p>
+  <table>
+    <tr><th>Claim</th><th>Result</th><th>Value at the run</th></tr>
+    <tr><td><span class="cid">C1</span> Intents 30d volume ≥ $3.0B</td><td><span class="badge b-pass">PASS</span></td><td>$3,797,462,047</td></tr>
+    <tr><td><span class="cid">C2</span> TVL ≥ $150M</td><td><span class="badge b-pass">PASS</span></td><td>$154,761,535</td></tr>
+    <tr><td><span class="cid">C3</span> Chain fees 30d ≥ $250K</td><td><span class="badge b-fail">FAIL</span></td><td>$129,456</td></tr>
+    <tr><td><span class="cid">C4</span> Validators ≥ 300</td><td><span class="badge b-pass">PASS</span></td><td>355</td></tr>
+    <tr><td><span class="cid">C5</span> Market cap ≥ $4.0B</td><td><span class="badge b-pass">PASS</span></td><td>$4,220,521,830</td></tr>
+    <tr><td><span class="cid">C6</span> Price within 50% of ATH</td><td><span class="badge b-fail">FAIL</span></td><td>−84.26% vs ATH</td></tr>
+  </table>
+  <div class="verdictbox">
+    <div class="label">Overall verdict of record</div>
+    <div class="big">4 of 6 — THESIS PARTIALLY BROKEN</div>
+    <p style="margin:6px 0">Verdict rule (fixed in advance): 5–6 pass = THESIS HOLDS · 3–4 =
+    PARTIALLY BROKEN · 0–2 = BROKEN. A claim whose source cannot be reached is UNVERIFIABLE —
+    excluded from the pass count, never guessed; the official run had none.</p>
+  </div>
+</section>
+
+
+<!-- ================= 10 QUERIES & METHODS ================= -->
+<section class="view" id="v-queries">
+  <div class="kicker">10 · Queries &amp; Methods</div>
+  <h2>Every number, traced to its exact query</h2>
+  <p class="sub">There is no database behind this project and no server-side code: each figure is one
+  public, keyless query, run in the visitor's browser. Click any endpoint and you see the raw JSON the
+  page itself reads — the same bytes, the same fields, nothing in between.</p>
+  <table>
+    <tr><th>Figure</th><th>Endpoint (click to see the raw data)</th><th>Field / method used</th></tr>
+    <tr><td><span class="cid">C1</span> Intents 30d volume</td><td><a href="https://api.llama.fi/summary/dexs/near-intents" target="_blank" rel="noopener">api.llama.fi/summary/dexs/near-intents</a></td><td><span class="hash" style="font-size:12px">total30d</span></td></tr>
+    <tr><td><span class="cid">C2</span> Chain TVL</td><td><a href="https://api.llama.fi/v2/chains" target="_blank" rel="noopener">api.llama.fi/v2/chains</a></td><td>row where <span class="hash" style="font-size:12px">name = "Near"</span> → <span class="hash" style="font-size:12px">tvl</span></td></tr>
+    <tr><td><span class="cid">C3</span> Chain fees 30d</td><td><a href="https://api.llama.fi/summary/fees/near" target="_blank" rel="noopener">api.llama.fi/summary/fees/near</a></td><td><span class="hash" style="font-size:12px">total30d</span></td></tr>
+    <tr><td><span class="cid">C4</span> Validators</td><td>POST https://rpc.mainnet.near.org</td><td>JSON-RPC <span class="hash" style="font-size:12px">validators</span> → length of <span class="hash" style="font-size:12px">current_validators</span></td></tr>
+    <tr><td><span class="cid">C5/C6</span> Market cap, price, ATH</td><td><a href="https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&amp;ids=near" target="_blank" rel="noopener">api.coingecko.com/api/v3/coins/markets?ids=near</a></td><td><span class="hash" style="font-size:12px">market_cap</span> · <span class="hash" style="font-size:12px">ath_change_percentage</span> · also supply fields for §05–06</td></tr>
+    <tr><td>Claims seal</td><td>POST https://rpc.testnet.near.org</td><td><span class="hash" style="font-size:12px">query / call_function get_claims</span> on falsifynear.testnet — the test page runs this check on every load</td></tr>
+    <tr><td>Latest news (§08)</td><td><a href="https://api.gdeltproject.org/api/v2/doc/doc?query=%22NEAR%20Protocol%22%20crypto&amp;mode=ArtList&amp;maxrecords=8&amp;format=json" target="_blank" rel="noopener">api.gdeltproject.org — NEAR Protocol query</a></td><td><span class="hash" style="font-size:12px">articles[]</span> title, domain, seendate, url</td></tr>
+  </table>
+  <div class="panel">
+    <p><strong>Method notes.</strong> Snapshot method: spot values at fetch time, no time-averaging —
+    near-threshold claims (C2 especially) can flip between runs, which is why only the dated,
+    hash-sealed official run counts as the verdict of record. A failed fetch renders UNVERIFIABLE and
+    is excluded from the pass count, never converted into a pass or a fail. Aggregator methodologies
+    (DefiLlama, CoinGecko) are theirs; every figure links to its origin so it can be audited there.</p>
+  </div>
+</section>
+
+<!-- ================= 11 VERIFY ================= -->
+<section class="view" id="v-verify">
+  <div class="kicker">11 · Verify It Yourself</div>
+  <h2>Don't trust this page. Check the chain.</h2>
+  <div class="panel">
+    <div class="label">Claims — sealed before the run</div>
+    <p>SHA-256 of claims.txt:<br><span class="hash">0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86</span></p>
+    <p>Sealed via <span class="hash" style="font-size:12px">register_claims</span> on
+    <span class="hash" style="font-size:12px">falsifynear.testnet</span> — tx
+    <span class="hash" style="font-size:12px">7axaubcY1QWb2UGZGBzSyQohPAdcFmuBSkXKWdKogzY</span>, block 277671036.</p>
+    <div class="label" style="margin-top:16px">Verdict — sealed after the run</div>
+    <p>SHA-256 of the official results JSON:<br><span class="hash">1b5ce91c288174841d825dad4ae3f4b8bdc89f76487dc1edbd0970a147624595</span></p>
+    <p>Sealed via <span class="hash" style="font-size:12px">record_verdict</span> — block 277675514,
+    verdict #1 of 1. The exact file is published in the repo as
+    <span class="hash" style="font-size:12px">official-results.json</span>: download it, run
+    <span class="hash" style="font-size:12px">sha256sum official-results.json</span>, and compare —
+    it matches byte for byte (the file carries no trailing newline, exactly as the page produced it).</p>
+    <div class="label" style="margin-top:16px">Three checks anyone can run</div>
+    <p>1. <span class="hash" style="font-size:12px">sha256sum claims.txt</span> from the repo → must equal the claims hash above.<br>
+    2. <span class="hash" style="font-size:12px">near view falsifynear.testnet get_claims</span> → the same hash, block 277671036.<br>
+    3. <span class="hash" style="font-size:12px">near view falsifynear.testnet get_verdicts</span> → verdict #1, 4/6, the results hash above, block 277675514 — later than the claims seal. The order is the proof.</p>
+    <p>Contract hardening, disclosed: after an external review, <span class="hash" style="font-size:12px">record_verdict</span>
+    was restricted to the claims owner (a non-owner call now throws; verified live by a negative
+    test). An earlier near-sdk-js state bug was likewise found, fixed and disclosed in the repo
+    README. The seals survived both redeploys untouched — the chronology anchors are the on-chain
+    transactions themselves, which no redeploy can rewrite.</p>
+  </div>
+  <a class="cta" href="test.html">Back to the live test →</a>
 </section>
 
 <footer>
-  <p><strong>Data sources:</strong>
-    <a href="https://api.llama.fi/summary/dexs/near-intents">DefiLlama — NEAR Intents volume</a> ·
-    <a href="https://api.llama.fi/v2/chains">DefiLlama — chain TVL</a> ·
-    <a href="https://api.llama.fi/summary/fees/near">DefiLlama — NEAR fees</a> ·
-    <a href="https://www.coingecko.com/en/coins/near">CoinGecko — NEAR market data</a> ·
-    <a href="https://rpc.mainnet.near.org">NEAR mainnet RPC — validators</a> ·
-    Seal: <a href="https://testnet.nearblocks.io/address/falsifynear.testnet">falsifynear.testnet on NearBlocks (testnet)</a>
-  </p>
-  <p><strong>Method:</strong> thresholds were fixed in writing before any verdict was computed; the
-    claims file's SHA-256 was sealed on NEAR testnet in a contract whose claims record is immutable
-    (registering twice is rejected by the contract). Verdicts are computed live in the visitor's
-    browser from the public sources above.</p>
-  <p>FalsifyNEAR is one of two independent NEAR Hackathon entries by the same builder; the other is CleanRoom Seal (github.com/imran3360/cleanroom-seal). Cross-disclosed per hackathon rules.</p>
+  <p><strong>Data sources:</strong> DefiLlama (Intents volume, chain TVL, chain fees) · CoinGecko
+  (price, market cap, ATH distance) · NEAR mainnet RPC (validators) — keyless public sources, the
+  same ones the <a href="test.html">live test</a> uses.</p>
+  <p><strong>Method:</strong> thresholds fixed in writing and hash-sealed on NEAR testnet before any
+  verdict was computed; verdicts computed live in the visitor's browser; the verdict of record is
+  the dated official run, sealed on-chain after the run.</p>
+  <p>FalsifyNEAR is one of two independent NEAR Hackathon entries by the same builder; the other is
+  CleanRoom Seal (github.com/imran3360/cleanroom-seal). Cross-disclosed per hackathon rules.</p>
   <p><strong>NOT FINANCIAL ADVICE.</strong> Testnet contract; data from public APIs; figures change
-    over time and may be unavailable or wrong. Nothing here is a recommendation to buy, sell, or hold any asset.</p>
+  over time and may be unavailable or wrong.</p>
 </footer>
 
+</main>
 </div>
 
 <script>
 "use strict";
-// === CONFIG (single place) ===
-const CONTRACT_ID = "falsifynear.testnet"; // NEAR testnet contract holding the sealed claims hash
-const TESTNET_RPC = "https://rpc.testnet.near.org";
-const EXPECTED_CLAIMS_HASH = "0cac2dad99f08f8dd08cb6fed5cdd9f94139051b682031c18dc96c6c87e09d86";
+// === Section switching ===
+function show(id){
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "v-" + id));
+  document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("on", b.dataset.v === id));
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => show(b.dataset.v)));
+document.querySelectorAll("[data-go]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); show(a.dataset.go); }));
 
-// === Claim definitions: thresholds fixed in claims.txt, sealed before testing ===
-const CLAIMS = [
-  { id:"C1", text:"NEAR Intents 30-day swap volume is at least $3.0B",
-    thresholdLabel:"PASS if >= $3.0B", sourceLabel:"DefiLlama · summary/dexs/near-intents",
-    sourceUrl:"https://api.llama.fi/summary/dexs/near-intents",
-    fetchValue: async () => { const d = await getJSON("https://api.llama.fi/summary/dexs/near-intents"); return num(d.total30d); },
-    test: v => v >= 3000000000, format: fmtBigUSD },
-  { id:"C2", text:"NEAR chain TVL is at least $150M",
-    thresholdLabel:"PASS if >= $150M", sourceLabel:"DefiLlama · v2/chains (Near)",
-    sourceUrl:"https://api.llama.fi/v2/chains",
-    fetchValue: async () => { const d = await getJSON("https://api.llama.fi/v2/chains");
-      const row = Array.isArray(d) ? d.find(c => c && c.name === "Near") : null;
-      if (!row) throw new Error("Near row not found"); return num(row.tvl); },
-    test: v => v >= 150000000, format: fmtBigUSD },
-  { id:"C3", text:"NEAR chain fees over 30 days are at least $250K",
-    thresholdLabel:"PASS if >= $250,000", sourceLabel:"DefiLlama · summary/fees/near",
-    sourceUrl:"https://api.llama.fi/summary/fees/near",
-    fetchValue: async () => { const d = await getJSON("https://api.llama.fi/summary/fees/near"); return num(d.total30d); },
-    test: v => v >= 250000, format: fmtUSD },
-  { id:"C4", text:"NEAR mainnet current validator set has at least 300 validators",
-    thresholdLabel:"PASS if >= 300 validators", sourceLabel:"NEAR mainnet RPC · validators",
-    sourceUrl:"https://rpc.mainnet.near.org",
-    fetchValue: async () => { const d = await rpcMainnetValidators();
-      if (!d.result || !Array.isArray(d.result.current_validators)) throw new Error("validators shape unexpected");
-      return d.result.current_validators.length; },
-    test: v => v >= 300, format: v => String(Math.round(v)) },
-  { id:"C5", text:"NEAR market cap is at least $4.0B",
-    thresholdLabel:"PASS if >= $4.0B", sourceLabel:"CoinGecko · coins/markets (near)",
-    sourceUrl:"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near",
-    fetchValue: async () => { const d = await coinGecko(); return num(d.market_cap); },
-    test: v => v >= 4000000000, format: fmtBigUSD },
-  { id:"C6", text:"NEAR price has recovered to within 50% of its all-time high",
-    thresholdLabel:"PASS if ATH change >= -50%", sourceLabel:"CoinGecko · coins/markets (near)",
-    sourceUrl:"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near",
-    fetchValue: async () => { const d = await coinGecko(); return num(d.ath_change_percentage); },
-    test: v => v >= -50, format: v => v.toFixed(1) + "% vs ATH" },
-];
-
-// === Helpers ===
-function num(x){ const n = Number(x); if (!isFinite(n)) throw new Error("value missing or not a number"); return n; }
-async function getJSON(url){
-  const r = await fetch(url, { headers: { "Accept": "application/json" } });
-  if (!r.ok) throw new Error("HTTP " + r.status);
-  return r.json();
-}
-async function rpcMainnetValidators(){
-  const r = await fetch("https://rpc.mainnet.near.org", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: "falsifynear", method: "validators", params: [null] })
-  });
-  if (!r.ok) throw new Error("HTTP " + r.status);
-  return r.json();
-}
-let _cgPromise = null;
-function coinGecko(){
-  if (!_cgPromise) _cgPromise = getJSON("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near")
-    .then(d => { if (!Array.isArray(d) || !d[0]) throw new Error("CoinGecko shape unexpected"); return d[0]; });
-  return _cgPromise;
-}
-async function sha256Hex(text){
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-}
+// === At-a-glance live cards (same keyless sources as the test; failures shown, never guessed) ===
 function fmtBigUSD(v){
   if (Math.abs(v) >= 1e9) return "$" + (v / 1e9).toFixed(2) + "B";
   if (Math.abs(v) >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M";
   if (Math.abs(v) >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
   return "$" + v.toFixed(0);
 }
-function fmtUSD(v){ return "$" + Math.round(v).toLocaleString("en-US"); }
-function overallFor(passed){
-  if (passed >= 5) return { key: "HOLDS", label: "THESIS HOLDS", cls: "v-holds" };
-  if (passed >= 3) return { key: "PARTIALLY BROKEN", label: "THESIS PARTIALLY BROKEN", cls: "v-part" };
-  return { key: "BROKEN", label: "THESIS BROKEN", cls: "v-broken" };
+async function getJSON(url){
+  const r = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
 }
-
-// === DOM builders (textContent only for any fetched/derived value) ===
-function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-const cards = {};
-function buildCards(){
-  const host = document.getElementById("claims");
-  CLAIMS.forEach(c => {
-    const card = el("div", "claim");
-    const h = el("h3");
-    h.appendChild(el("span", "cid", c.id));
-    h.appendChild(document.createTextNode(c.text));
-    const meta = el("div", "meta");
-    meta.appendChild(document.createTextNode(c.thresholdLabel + " · Source: "));
-    const a = el("a", null, c.sourceLabel); a.href = c.sourceUrl; a.target = "_blank"; a.rel = "noopener";
-    meta.appendChild(a);
-    const live = el("div", "live");
-    const val = el("span", null, "—"); val.id = "val-" + c.id;
-    const badge = el("span", "badge b-wait", "NOT RUN"); badge.id = "badge-" + c.id; badge.style.marginLeft = "12px";
-    live.appendChild(val); live.appendChild(badge);
-    card.appendChild(h); card.appendChild(meta); card.appendChild(live);
-    host.appendChild(card);
-    cards[c.id] = { val, badge };
-  });
+function setCard(id, val, subId, sub){
+  const e = document.getElementById(id);
+  if (e) e.textContent = val;
+  if (subId) { const s = document.getElementById(subId); if (s) s.textContent = sub; }
 }
-function setBadge(id, kind, text){
-  const b = cards[id].badge;
-  b.className = "badge " + (kind === "PASS" ? "b-pass" : kind === "FAIL" ? "b-fail" : kind === "UNVERIFIABLE" ? "b-unv" : "b-wait");
-  b.textContent = text;
-}
-
-// === Section 1: claims hash + on-chain seal check ===
-async function checkSeal(){
-  const hashEl = document.getElementById("computedHash");
-  const sealEl = document.getElementById("sealState");
-  let computed = null;
+(async () => {
   try {
-    const txt = await (await fetch("claims.txt")).text();
-    computed = await sha256Hex(txt);
-    hashEl.textContent = computed;
+    const d = await getJSON("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near");
+    const row = Array.isArray(d) && d[0];
+    if (!row) throw new Error("shape");
+    setCard("gPrice", "$" + Number(row.current_price).toFixed(2), "gPriceSub",
+      "CoinGecko · " + Number(row.ath_change_percentage).toFixed(1) + "% vs ATH (C6 bar: within −50%)");
+    setCard("gCap", fmtBigUSD(Number(row.market_cap)));
   } catch (e) {
-    hashEl.textContent = "could not load claims.txt from this origin — verify the hash from the repo instead";
+    setCard("gPrice", "unavailable", "gPriceSub", "CoinGecko unreachable — official run: −84.26% vs ATH (FAIL)");
+    setCard("gCap", "unavailable");
   }
   try {
-    const argsB64 = btoa(JSON.stringify({}));
-    const r = await fetch(TESTNET_RPC, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: "sealcheck", method: "query",
-        params: { request_type: "call_function", finality: "final",
-          account_id: CONTRACT_ID, method_name: "get_claims", args_base64: argsB64 } })
+    const d = await getJSON("https://api.llama.fi/summary/dexs/near-intents");
+    setCard("gIntents", fmtBigUSD(Number(d.total30d)));
+  } catch (e) { setCard("gIntents", "unavailable"); }
+  try {
+    const d = await getJSON("https://api.llama.fi/summary/fees/near");
+    setCard("gFees", fmtBigUSD(Number(d.total30d)));
+  } catch (e) { setCard("gFees", "unavailable"); }
+})();
+</script>
+
+<script>
+"use strict";
+// === Supply + Valuation (share the same keyless fetches; every failure renders honestly) ===
+function setText(id, val){ const e = document.getElementById(id); if (e) e.textContent = val; }
+function fmtNum(v){
+  if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(2) + "B";
+  if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(1) + "M";
+  if (Math.abs(v) >= 1e3) return (v / 1e3).toFixed(1) + "K";
+  return String(Math.round(v));
+}
+function fmtUSD2(v){
+  if (Math.abs(v) >= 1e9) return "$" + (v / 1e9).toFixed(2) + "B";
+  if (Math.abs(v) >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M";
+  if (Math.abs(v) >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
+  return "$" + v.toFixed(0);
+}
+(async () => {
+  let cg = null, fees = null, intents = null, tvl = null;
+  try {
+    const d = await getJSON("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=near");
+    cg = Array.isArray(d) && d[0] ? d[0] : null;
+  } catch (e) {}
+  try { const d = await getJSON("https://api.llama.fi/summary/fees/near"); fees = Number(d.total30d); } catch (e) {}
+  try { const d = await getJSON("https://api.llama.fi/summary/dexs/near-intents"); intents = Number(d.total30d); } catch (e) {}
+  try {
+    const d = await getJSON("https://api.llama.fi/v2/chains");
+    const row = Array.isArray(d) ? d.find(c => c && c.name === "Near") : null;
+    if (row) tvl = Number(row.tvl);
+  } catch (e) {}
+
+  // --- Supply ---
+  if (cg && isFinite(Number(cg.circulating_supply))) {
+    const circ = Number(cg.circulating_supply), tot = Number(cg.total_supply);
+    setText("sCirc", fmtNum(circ) + " NEAR");
+    setText("sTotal", isFinite(tot) ? fmtNum(tot) + " NEAR" : "unavailable");
+    setText("sMax", cg.max_supply ? fmtNum(Number(cg.max_supply)) + " NEAR" : "No hard cap");
+    setText("sPct", (isFinite(tot) && tot > 0) ? (circ / tot * 100).toFixed(1) + "%" : "unavailable");
+  } else { ["sCirc","sTotal","sMax","sPct"].forEach(id => setText(id, "unavailable")); }
+
+  // --- Valuation ---
+  const cap = cg ? Number(cg.market_cap) : NaN, price = cg ? Number(cg.current_price) : NaN;
+  setText("valCap", isFinite(cap) ? fmtUSD2(cap) : "unavailable");
+  setText("valFdv", (cg && isFinite(price) && isFinite(Number(cg.total_supply))) ? fmtUSD2(price * Number(cg.total_supply)) : "unavailable");
+  setText("valPF", (isFinite(cap) && isFinite(fees) && fees > 0) ? Math.round(cap / (fees * 12)).toLocaleString("en-US") + "×" : "unavailable");
+  setText("valTake", (isFinite(fees) && isFinite(intents) && intents > 0) ? (fees / intents * 100).toFixed(3) + "%" : "unavailable");
+  setText("valTvl", (isFinite(cap) && isFinite(tvl) && cap > 0) ? (tvl / cap * 100).toFixed(1) + "%" : "unavailable");
+  setText("valAth", cg && isFinite(Number(cg.ath_change_percentage)) ? Number(cg.ath_change_percentage).toFixed(1) + "% vs ATH" : "unavailable");
+
+  // --- News (GDELT; context only, graceful failure) ---
+  const host = document.getElementById("newsList");
+  try {
+    const d = await getJSON("https://api.gdeltproject.org/api/v2/doc/doc?query=%22NEAR%20Protocol%22%20crypto&mode=ArtList&maxrecords=8&format=json&sort=DateDesc");
+    const arts = (d && Array.isArray(d.articles)) ? d.articles : [];
+    if (!arts.length) throw new Error("empty");
+    host.textContent = "";
+    arts.forEach(a => {
+      const p = document.createElement("p");
+      p.style.margin = "8px 0";
+      const link = document.createElement("a");
+      link.href = a.url; link.target = "_blank"; link.rel = "noopener";
+      link.textContent = a.title || a.url;
+      p.appendChild(link);
+      const meta = document.createElement("span");
+      meta.style.color = "var(--faint)"; meta.style.fontSize = "12px";
+      const dt = a.seendate ? a.seendate.replace(/^(\d{4})(\d{2})(\d{2}).*/, "$1-$2-$3") : "";
+      meta.textContent = " — " + (a.domain || "") + (dt ? " · " + dt : "");
+      p.appendChild(meta);
+      host.appendChild(p);
     });
-    const d = await r.json();
-    if (d.error) throw new Error("RPC error");
-    const bytes = (d.result && d.result.result) || [];
-    const rec = bytes.length ? JSON.parse(new TextDecoder().decode(new Uint8Array(bytes))) : null;
-    sealEl.textContent = "";
-    if (!rec) {
-      sealEl.appendChild(el("span", "badge b-unv", "SEAL NOT FOUND YET"));
-      sealEl.appendChild(el("div", "meta",
-        "The contract returned no claims record. The seal may not have been made yet — this page will show it here as soon as it exists on testnet."));
-      return;
-    }
-    const match = computed && rec.claims_hash === computed && rec.claims_hash === EXPECTED_CLAIMS_HASH;
-    const badge = el("span", "badge " + (match ? "b-pass" : "b-fail"), match ? "SEALED · MATCH" : "SEALED · MISMATCH");
-    sealEl.appendChild(badge);
-    const when = rec.timestamp_ms ? new Date(Number(rec.timestamp_ms)).toLocaleString("en-GB") : "unknown";
-    const lines = el("div", "meta");
-    lines.appendChild(document.createTextNode("Sealed hash: "));
-    lines.appendChild(el("span", "hash", String(rec.claims_hash)));
-    lines.appendChild(el("br"));
-    lines.appendChild(document.createTextNode("Sealed by " + String(rec.owner || "?") +
-      " · block height " + String(rec.block_height || "?") + " · " + when));
-    if (!match) {
-      lines.appendChild(el("br"));
-      lines.appendChild(el("span", "err",
-        "The on-chain hash does not match the claims file served here — the claims were changed after sealing, or the seal belongs to a different version. Trust the chain, not this page."));
-    }
-    sealEl.appendChild(lines);
   } catch (e) {
-    sealEl.textContent = "";
-    sealEl.appendChild(el("span", "badge b-unv", "SEAL NOT FOUND YET"));
-    sealEl.appendChild(el("div", "meta",
-      "The testnet contract could not be read just now (it may not be deployed yet, or the RPC is unreachable). No seal is claimed here until the chain itself answers."));
+    host.textContent = "";
+    const p = document.createElement("p");
+    p.className = "sub"; p.style.margin = "6px 0";
+    p.textContent = "The live headline feed could not be reached just now — use the source links below instead. (This changes nothing about the sealed verdict.)";
+    host.appendChild(p);
   }
-}
-
-// === Section 2: the live test ===
-let running = false;
-async function runTest(){
-  if (running) return;
-  running = true;
-  const btn = document.getElementById("runBtn");
-  btn.disabled = true; btn.textContent = "Testing…";
-  document.getElementById("runNote").textContent = "Fetching live data from DefiLlama, CoinGecko and NEAR mainnet RPC…";
-  CLAIMS.forEach(c => { cards[c.id].val.textContent = "…"; setBadge(c.id, "WAIT", "TESTING"); });
-
-  const results = await Promise.all(CLAIMS.map(async c => {
-    try {
-      const v = await c.fetchValue();
-      const verdict = c.test(v) ? "PASS" : "FAIL";
-      cards[c.id].val.textContent = c.format(v);
-      setBadge(c.id, verdict, verdict);
-      return { id: c.id, value: v, verdict };
-    } catch (e) {
-      cards[c.id].val.textContent = "unavailable";
-      setBadge(c.id, "UNVERIFIABLE", "UNVERIFIABLE");
-      return { id: c.id, value: null, verdict: "UNVERIFIABLE" };
-    }
-  }));
-
-  const passed = results.filter(r => r.verdict === "PASS").length;
-  const unv = results.filter(r => r.verdict === "UNVERIFIABLE").length;
-  const overall = overallFor(passed);
-
-  const box = document.getElementById("verdictBox");
-  box.className = "verdict show " + overall.cls;
-  document.getElementById("verdictBig").textContent = overall.label;
-  document.getElementById("verdictDetail").textContent =
-    passed + " of " + CLAIMS.length + " claims passed" +
-    (unv ? " · " + unv + " unverifiable in this run (excluded from the pass count, never guessed)" : "") +
-    ". Thresholds were sealed before this test ran — the data had the last word.";
-
-  const payload = {
-    project: "FalsifyNEAR", claims_hash: EXPECTED_CLAIMS_HASH,
-    tested_at: new Date().toISOString(),
-    results: results.map(r => ({ id: r.id, value: r.value, verdict: r.verdict })),
-    passed, total: CLAIMS.length, overall: overall.key
-  };
-  const jsonText = JSON.stringify(payload, null, 2);
-  document.getElementById("resultsJson").textContent = jsonText;
-  document.getElementById("resultsWrap").style.display = "block";
-  document.getElementById("resultsHash").textContent = await sha256Hex(jsonText);
-
-  document.getElementById("runNote").textContent = "Run complete. Figures are live as of this moment and will move.";
-  btn.disabled = false; btn.textContent = "Run the test again";
-  running = false;
-}
-
-buildCards();
-document.getElementById("runBtn").addEventListener("click", runTest);
-checkSeal();
+})();
 </script>
 </body>
 </html>
