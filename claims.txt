@@ -1,0 +1,10 @@
+FalsifyNEAR — Claims v1
+Fixed before any verdict was computed. Sealed on NEAR testnet before submission.
+Thesis: NEAR's Intents economy is already large enough to carry the chain — usage, liquidity, decentralization and market value clear real thresholds, while fee revenue and price recovery are the open questions.
+Rule: HOLDS if 5-6 claims pass. PARTIALLY BROKEN if 3-4 pass. BROKEN if 0-2 pass.
+C1 | NEAR Intents 30-day swap volume is at least $3.0B | source: DefiLlama api.llama.fi/summary/dexs/near-intents total30d | pass: >= 3000000000 USD
+C2 | NEAR chain TVL is at least $150M | source: DefiLlama api.llama.fi/v2/chains (name=Near) tvl | pass: >= 150000000 USD
+C3 | NEAR chain fees over 30 days are at least $250K | source: DefiLlama api.llama.fi/summary/fees/near total30d | pass: >= 250000 USD
+C4 | NEAR mainnet current validator set has at least 300 validators | source: NEAR mainnet RPC validators method, current_validators length | pass: >= 300
+C5 | NEAR market cap is at least $4.0B | source: CoinGecko api.coingecko.com/api/v3/coins/markets ids=near market_cap | pass: >= 4000000000 USD
+C6 | NEAR price has recovered to within 50% of its all-time high | source: CoinGecko ids=near ath_change_percentage | pass: >= -50 percent
