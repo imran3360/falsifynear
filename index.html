@@ -23,7 +23,8 @@
       var(--bg);
     background-attachment: fixed;}
   a{color:var(--accent)}
-  .layout{display:flex;align-items:flex-start;min-height:100vh}
+  .layout{display:flex;align-items:flex-start;min-height:100vh;max-width:1560px;margin:0 auto}
+  html,body{overflow-x:hidden}
   /* === Sidebar === */
   .side{width:232px;flex:0 0 232px;border-right:1px solid var(--line);background:rgba(10,13,24,.88);
         backdrop-filter:blur(6px);padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto}
@@ -73,6 +74,19 @@
   .cta:hover{border-color:var(--accent2);transform:translateY(-1px)}
   footer{border-top:1px solid var(--line);margin-top:44px;padding-top:20px;font-size:13px;color:var(--faint)}
   footer p{margin:8px 0}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .step .n{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;
+           border:1px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:13px;margin-bottom:6px}
+  .step h3{font-family:var(--serif);font-size:18px;margin:4px 0 4px}
+  .step p{margin:0;font-size:14.5px;color:var(--dim)}
+  .mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:14px 0}
+  .minic{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .minic .t{font-size:13.5px;color:var(--dim);margin:5px 0 2px;min-height:36px}
+  .minic .v{font-family:var(--serif);font-size:21px}
+  .minic .bar{height:8px;background:var(--panel2);border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-top:8px}
+  .minic .bar i{display:block;height:100%}
+  .quicklinks{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
   /* === Right rail === */
   .rail{width:304px;flex:0 0 304px;padding:28px 22px 40px 2px;position:sticky;top:0;height:100vh;overflow:auto}
   .railcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
@@ -85,6 +99,8 @@
   .railgo{display:inline-block;margin-top:8px;background:none;border:1px solid var(--line);color:var(--accent);
           border-radius:8px;padding:7px 12px;cursor:pointer;font-size:14px;font-family:var(--sans)}
   .railgo:hover{border-color:var(--accent)}
+  /* === Tables never overflow their panel === */
+  @media (max-width:900px){ table{display:block;overflow-x:auto} }
   /* === Tablet: rail wraps under main === */
   @media (max-width:1180px){
     .layout{flex-wrap:wrap}
@@ -97,10 +113,9 @@
     .side{width:100%;flex:none;height:auto;position:static;border-right:none;border-bottom:1px solid var(--line);padding:14px 12px 8px}
     .brand{font-size:22px}
     .brandsub{margin-bottom:8px}
-    .navwrap{display:flex;overflow-x:auto;gap:7px;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .navwrap::-webkit-scrollbar{display:none}
-    .navbtn{width:auto;flex:0 0 auto;white-space:nowrap;padding:8px 13px;border:1px solid var(--line);border-radius:999px;font-size:15px;margin:0}
-    .navbtn.on{box-shadow:inset 0 -2px 0 var(--accent)}
+    .navwrap{display:grid;grid-template-rows:repeat(6,auto);grid-auto-flow:column;grid-template-columns:1fr 1fr;gap:7px;padding:4px 2px 10px}
+    .navbtn{width:auto;white-space:normal;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:15px;margin:0}
+    .navbtn.on{box-shadow:inset 3px 0 0 var(--accent)}
     .side .foot{display:none}
     .main{padding:20px 16px 48px}
     .rail{padding:4px 16px 40px}
@@ -156,6 +171,29 @@
     <p style="margin:6px 0">Intents volume, TVL, validators and market cap held. Fees and price
     recovery failed. Claims sealed on-chain at block 277671036 <em>before</em> the run; this verdict
     sealed at block 277675514 <em>after</em> it. Full detail in <a href="#" data-go="score">Scoreboard</a>.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step"><span class="n">1</span><h3>Seal the claims</h3><p>Six pass/fail bars for NEAR were written down, hashed, and sealed in a testnet contract — before any verdict data was consulted.</p></div>
+    <div class="step"><span class="n">2</span><h3>Test them live</h3><p>The test page checks each bar against live public data — DefiLlama, CoinGecko, NEAR RPC — in the visitor's own browser. No backend, no hand-picked screenshots.</p></div>
+    <div class="step"><span class="n">3</span><h3>Seal the verdict</h3><p>The official run's results file was hashed and sealed on-chain after the run. Anyone can re-hash the published file and compare — see Verify It Yourself.</p></div>
+  </div>
+
+  <div class="label" style="margin-top:18px">The six claims — official run, 14 Nov 2026</div>
+  <div class="mini">
+    <div class="minic"><span class="cid">C1</span> <span class="badge b-pass">PASS</span><div class="t">Intents volume, 30d ≥ $3.0B</div><div class="v">$3.80B</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C2</span> <span class="badge b-pass">PASS</span><div class="t">NEAR TVL ≥ $150M</div><div class="v">$154.8M</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C3</span> <span class="badge b-fail">FAIL</span><div class="t">Chain fees, 30d ≥ $250K</div><div class="v">$129K</div><div class="bar"><i style="width:52%;background:var(--fail)"></i></div></div>
+    <div class="minic"><span class="cid">C4</span> <span class="badge b-pass">PASS</span><div class="t">Validators ≥ 300</div><div class="v">355</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C5</span> <span class="badge b-pass">PASS</span><div class="t">Market cap ≥ $4.0B</div><div class="v">$4.22B</div><div class="bar"><i style="width:100%;background:var(--pass)"></i></div></div>
+    <div class="minic"><span class="cid">C6</span> <span class="badge b-fail">FAIL</span><div class="t">Price within 50% of ATH</div><div class="v">−84.3%</div><div class="bar"><i style="width:32%;background:var(--fail)"></i></div></div>
+  </div>
+
+  <div class="quicklinks">
+    <button class="railgo" data-go="thesis">Read the thesis →</button>
+    <button class="railgo" data-go="score">Full scoreboard →</button>
+    <button class="railgo" data-go="valuation">Live valuation →</button>
+    <button class="railgo" data-go="verify">Verify the hashes →</button>
   </div>
 
   <a class="cta" href="test.html">Run the test yourself — live, in your browser →</a>
