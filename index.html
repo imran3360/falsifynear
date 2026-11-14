@@ -55,6 +55,8 @@
   .sub{color:var(--dim);margin:0 0 16px;font-size:16px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0;box-shadow:0 10px 30px rgba(0,0,0,.35)}
   .panel p{margin:10px 0}
+  .panel h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:2px 0 6px}
+  .menubtn{display:none}
   .nfa{border:1px solid var(--unv);background:rgba(251,191,36,.08);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:15px}
   .nfa strong{color:var(--unv);letter-spacing:.06em}
   .hash{font-family:var(--mono);font-size:13px;word-break:break-all;color:var(--ink)}
@@ -114,13 +116,16 @@
     .main{order:2}
     .rail{order:3;width:100%;flex:none;position:static;height:auto;padding:4px 22px 44px}
   }
-  /* === Phone: horizontal scrolling nav chips, nothing stacks === */
+  /* === Phone: sticky header with collapsible section menu === */
   @media (max-width:760px){
     .layout{flex-direction:column}
-    .side{width:100%;flex:none;height:auto;position:static;border-right:none;border-bottom:1px solid var(--line);padding:14px 12px 8px}
+    .side{width:100%;flex:none;height:auto;position:sticky;top:0;z-index:60;border-right:none;border-bottom:1px solid var(--line);padding:12px 12px 10px}
     .brand{font-size:22px}
     .brandsub{margin-bottom:8px}
-    .navwrap{display:block;padding:2px 0 8px}
+    .menubtn{display:block;width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+             border-radius:8px;padding:10px 12px;font-size:16px;font-family:var(--sans);cursor:pointer;text-align:left}
+    .navwrap{display:none;padding:6px 0 4px}
+    .navwrap.open{display:block}
     .navbtn{width:100%;white-space:normal;padding:9px 11px;border:1px solid transparent;border-radius:8px;font-size:16px;margin:2px 0}
     .navbtn.on{box-shadow:inset 3px 0 0 var(--accent)}
     .side .foot{display:none}
@@ -137,6 +142,7 @@
 <aside class="side">
   <div class="brand">Falsify<em>NEAR</em></div>
   <p class="brandsub">The thesis, in full · NEAR Hackathon · Thesis Track</p>
+  <button class="menubtn" id="menuBtn" aria-label="Open sections menu">☰ Sections — tap to open</button>
   <nav class="navwrap">
   <button class="navbtn on" data-v="overview"><span class="ic">01</span>Overview</button>
   <button class="navbtn" data-v="thesis"><span class="ic">02</span>The Thesis</button>
@@ -163,7 +169,7 @@
   <h1>The NEAR thesis — and the test it set itself</h1>
   <p class="sub">Most thesis dashboards are built to be believed. This one is built to be
   <strong>checked</strong>: the thesis is stated in full, its six pass/fail bars were fixed and
-  hash-sealed on NEAR testnet <em>before</em> any data was consulted for a verdict, and the official
+  hash-sealed on NEAR testnet <em>before</em> the official run — the seal's block precedes the verdict's block, and anyone can check that order, and the official
   run is published with its receipts. The verdict was not kind. That is the point.</p>
 
   <div class="label" style="margin-top:4px">The six claims — official run, 14 Nov 2026</div>
@@ -204,6 +210,11 @@
     <button class="railgo" data-go="verify">Verify the hashes →</button>
   </div>
 
+  <div class="panel post"><div class="label">Field note</div><h3>Why falsifiability, though?</h3><p>Most research is written to be believed, and a claim you cannot lose is just marketing. These six bars were chosen so the thesis could publicly lose — and on two of them, it did. That is the entire product: not a prediction, a test.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>What the verdict does not say</h3><p>PARTIALLY BROKEN is a statement about six specific bars on one specific day, not about NEAR's future price. A chain can fail every bar here and still succeed later — or pass all six and fail anyway. The bars measure the present tense of the thesis, nothing more.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>If you read only one number</h3><p>Read the fees: $129,456 in 30 days. Volume can be incentivized, TVL can be mercenary, and a market cap is an opinion — fees are what users actually paid. Until that line grows by an order of magnitude, the value-capture question stays open no matter what the other five claims do.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>This site in 60 seconds</h3><p>The verdict box is the result. The six cards are the evidence. The Scoreboard is the receipts. Verify It Yourself is the hashes, checkable in your own terminal. Everything else on this site is argument arranged around those four stops.</p></div>
+
   <a class="cta" href="test.html">Run the test yourself — live, in your browser →</a>
 </section>
 
@@ -229,6 +240,11 @@
     fixed in <span class="hash" style="font-size:12px">claims.txt</span> and sealed before testing —
     the next section explains why each bar sits where it does.</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>The bull case, fairly stated</h3><p>NEAR has real usage at scale: billions in intent volume, hundreds of validators, a top-tier market cap, and a chain-abstraction story — intents, chain signatures — that much of the industry is now copying. If crypto consolidates around a few execution layers, NEAR has a credible seat at that table.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The bear case, fairly stated</h3><p>Usage is not capture. The chain moves billions and keeps almost none of it; the token trades about 84% below its high, years on; TVL is a rounding error next to the market cap. A great network can still be a mediocre asset — the bear case is that NEAR is exactly that.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>What would change this verdict</h3><p>Fees, mainly fees. If 30-day chain fees crossed the C3 bar and kept climbing, the value-capture objection weakens materially. A second signal: TVL holding above $150M through a market dip rather than only at local tops. Price recovery alone (C6) changes the mood, not the argument.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>Time horizon</h3><p>These bars judge a snapshot, not a destiny. The honest window for this thesis is quarters, not days: intent volume compounding, fees following volume with a lag, TVL surviving a drawdown. Re-running this test quarterly would say more than any single verdict — including this one.</p></div>
 </section>
 
 <section class="view" id="v-bars">
@@ -274,6 +290,10 @@
     reader weighing the verdict should know the overlap exists. It is stated here, in the thesis
     itself, not discovered by critics later.</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>Why round numbers?</h3><p>$3B, $150M, $250K, $4B are round because they were fixed in advance, in public, without knowing the readings. A bar tuned to $3.42B would smell of curve-fitting. Round bars are a feature of pre-registration: they prove the target was not painted around the arrow.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The bar I would set differently today</h3><p>C3, honestly. $250K of monthly fees annualizes to about $3M against a $4.2B market cap — even passing it leaves a price-to-fees multiple near 1,400x. The bar tests existence, not health. It stays exactly as sealed, because moving it now would be precisely the cheating this site exists to prevent — but a future claim set should demand more.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>A bar is not a target</h3><p>Teams optimize whatever is measured, which is why these bars were set by an outsider with no stake in them being met. The moment a bar becomes a team's KPI it gets gamed — mercenary TVL, washed volume. These were set to be failed safely: nobody's bonus depends on them.</p></div>
 </section>
 
 <section class="view" id="v-value">
@@ -298,6 +318,10 @@
     routine DeFi drawdown — either turns PARTIALLY BROKEN into BROKEN, in public, with the receipts
     sealed.</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>Where the money in an intent actually goes</h3><p>When a user fires an intent, solvers compete to fill it and earn the spread; the L1 sees settlement, not the business. That is how $3.8B of flow can coexist with $129K of chain fees: the economics live one layer above the chain. Good for users — awkward for tokenholders.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The contradiction in one line</h3><p>Annualized, the official run's fees come to about $1.6M a year. The market prices NEAR at about $4.2B. That is roughly 2,700 years of current fee income inside the price: the market is not buying today's cash flows, it is buying a future where capture is a hundred times better. That future may come. It is not here yet.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>What could close the gap</h3><p>Only three honest routes exist: volume grows until fees scale into the multiple; the protocol takes a real cut through fee or burn mechanics that route intent economics to the token; or the price falls to meet the fees. This site takes no position on which happens — it measures the gap so the argument cannot hide from it.</p></div>
 </section>
 
 <section class="view" id="v-supply">
@@ -322,6 +346,10 @@
     a sustained period where fee burns visibly offset issuance. Neither is asserted here; both are
     checkable against the same public sources, which is the standard this project holds itself to.</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>Inflation, in plain words</h3><p>NEAR issues new tokens at roughly 5% a year at most, paid mostly to validators and stakers. Hold without staking and your share of the network shrinks by about that much annually. Inflation is neither theft nor free money — it is a tax on passive holders that pays for security.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>Why supply alone does not sink the thesis</h3><p>A rising supply with faster-rising demand still appreciates. The issuance schedule is known, rate-capped, and identical for every holder — markets can price known inflation. What markets cannot price is the demand question, which is why the sealed claims test usage and fees rather than issuance.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The staking lock-up effect</h3><p>A large share of supply is staked and illiquid at any given moment, so the tradable float is smaller than the circulating figure suggests. That cuts both ways: rallies can be sharper, and so can exits. The figures above are the accounting truth; the float is the trading truth.</p></div>
 </section>
 
 <section class="view" id="v-valuation">
@@ -341,6 +369,7 @@
   <tr><td>Peer context — Solana TVL (live)</td><td id="valSolTvl">…</td><td>DefiLlama v2/chains, row name = "Solana" → tvl. A live scale reference for C2's $150M bar — context, not a claim.</td></tr>
     <tr><td>Peer context — Solana chain fees, 30d (live)</td><td id="valSolFees">…</td><td>DefiLlama summary/fees/solana → total30d. The comparison C3 has to survive; shown, not argued away.</td></tr>
   </table>
+    <p class="sub" style="font-size:13px">If the live sources are unreachable, the official-run reference values (14 Nov) were: market cap $4.22B · price-to-fees about 2,700x · fees 0.003% of Intents volume · TVL 3.7% of market cap · price −84.3% vs ATH. Live values above replace them whenever they load.</p>
   <div class="panel">
     <p><strong>Reading the official run through this lens:</strong> at the run, price-to-fees was
     roughly <strong>2,700×</strong> ($4.22B cap against a ~$1.6M annualized fee run-rate). By any
@@ -349,6 +378,10 @@
     to be "Intents keeps compounding until the fees follow". That is a growth claim, and C1/C3 are
     exactly the pair of sealed claims that will grade it over time.</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>How to read a 2,700x multiple</h3><p>A price-to-fees multiple near 2,700x does not mechanically mean 'sell' — it means the price embeds heroic growth. The multiple is a question, not an answer: what fee growth, sustained for how many years, justifies it? If that path cannot be written down, the position is a hope, not a valuation.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The Solana scale check</h3><p>The peer rows above are live, and they are sobering: Solana's TVL is dozens of times NEAR's, and its monthly chain fees are hundreds of times larger. NEAR does not need to beat Solana for this thesis to work — but the gap defines how much 'future' is already inside NEAR's price relative to a chain that has the present.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>What the market is pricing in</h3><p>At about $4.2B against about $1.6M of annualized fees, the market prices NEAR as an option on chain abstraction winning — on intents becoming a default way users move across chains. Options can pay off enormously, or expire. The claims on this site test whether the underlying is growing into the option price.</p></div>
 </section>
 
 <section class="view" id="v-risks">
@@ -370,6 +403,10 @@
     spot values, no time-averaging — near-threshold claims can flip between runs, which is why the
     verdict of record is a single dated, sealed run and not a live "score".</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>The C2 slide, watched live</h3><p>This risk is not hypothetical. TVL read $154.8M at the official run (14 Nov, 21:20 Dhaka), about $150.9M hours later, and about $145.1M by the early hours of 15 Nov — under the bar. A thesis whose claim can flip in an evening is a thesis standing on a slope. The sealed verdict stands as the record; the live line is the warning.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>Aggregator risk</h3><p>Every figure here flows through DefiLlama and CoinGecko methodologies the builder does not control. If an aggregator reclassifies an intents venue or a bridge, a claim can flip without anything changing on-chain. The Queries & Methods section names the exact endpoints so a methodology change is at least visible when it happens.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The strongest argument against this site</h3><p>That falsification theater is still theater: six bars, one day, one chain, chosen by the same person who wrote the thesis. Fair — which is why the bars were sealed before the run and the verdict rule is printed on this page. The defense is not that the test is perfect; it is that every weakness is disclosed where a judge can find it.</p></div>
 </section>
 
 <section class="view" id="v-score">
@@ -395,6 +432,10 @@
     PARTIALLY BROKEN · 0–2 = BROKEN. A claim whose source cannot be reached is UNVERIFIABLE —
     excluded from the pass count, never guessed; the official run had none.</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>How to read this scoreboard</h3><p>The margin matters more than the badge. C1 passed at 127% of its bar; C2 at 103% — one is a fact, the other is a coin toss that landed kindly. Read the bar-reached meters, not just PASS and FAIL, and distrust any claim sitting within about ten percent of its line.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The C2 story</h3><p>TVL passed the official run by about $4.8M — roughly 3%. By the next night it was under the bar. Nothing about NEAR changed in those hours; the measurement did. That is the snapshot method's weakness in a single anecdote, printed here rather than hidden, because the anecdote is the lesson.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>A re-run tonight would likely read 3 of 6</h3><p>Checked against live sources on the night of 14-15 Nov: TVL had slipped under $150M while fees and price recovery still failed — a fresh run would most likely score 3 passes (C1, C4, C5) under the same verdict, PARTIALLY BROKEN. Live figures move; the sealed run remains the verdict of record.</p></div>
 </section>
 
 <section class="view" id="v-news">
@@ -419,6 +460,10 @@
       <a href="https://x.com/search?q=%24NEAR%20OR%20NEAR%20Protocol&amp;f=live" target="_blank" rel="noopener">X — live $NEAR posts</a>
     </p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>How to read crypto headlines</h3><p>Ask three questions of any headline here: is it news or a press release, does it name a number, and would it change any of the six bars? Most crypto coverage fails all three. A partnership announcement is not volume; a listing is not fees. The bars are the filter — headlines are weather.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>Why headlines cannot move the verdict</h3><p>By construction. The verdict comes from DefiLlama, CoinGecko and NEAR RPC endpoints, re-fetched when the test runs. News can explain a number after it moves; it cannot substitute for the number. That is deliberate: narrative is the cheapest thing in crypto, and this site was built to be expensive to fool.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>About the sources</h3><p>GDELT indexes global news broadly, including low-quality outlets; the fallback feed (Google News) skews mainstream. Neither is an authority — both are a listening post. Anything here that matters should be traceable to a primary source: a team post, a governance forum, an on-chain record.</p></div>
 </section>
 
 <section class="view" id="v-queries">
@@ -444,6 +489,11 @@
     is excluded from the pass count, never converted into a pass or a fail. Aggregator methodologies
     (DefiLlama, CoinGecko) are theirs; every figure links to its origin so it can be audited there.</p>
   </div>
+
+  <div class="panel post"><div class="label">Field note</div><h3>Reproduce C1 yourself in two minutes</h3><p>Open the DefiLlama intents endpoint named above, read total30d, compare it to $3.0B. That is all — the strongest claim on this site is also the easiest to audit. If your figure differs from the official run's, check the timestamp before suspecting the math: 30-day windows slide daily.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>When two sources disagree</h3><p>They will. CoinGecko and DefiLlama define market cap and TVL slightly differently, and an RPC validator count depends on the epoch you ask in. The rule here: one named source per claim, fixed in advance in the table above, so a disagreement can never be settled by shopping for the friendlier number.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>The endpoint that matters most</h3><p>The fees endpoint. Volume can be routed and TVL can be rented, but the fees line is where usage becomes income. If you bookmark one query from this page, bookmark that one — it is the number the whole thesis eventually has to answer for.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>An honest limit of the archive</h3><p>The official run archived its derived results (official-results.json) but not the raw API payloads behind them. The values can be re-checked against live sources and the sealed hash at any time — but the exact 21:20 responses were not retained. Noted here so the record never claims more than it holds.</p></div>
 </section>
 
 <section class="view" id="v-verify">
@@ -475,6 +525,10 @@
     <p>The contract binary published in this repo (<span class="hash" style="font-size:12px">contract.wasm</span>) hashes to exactly the code running on-chain: SHA-256 <span class="hash">28025e2da723abb5d93ec78c0879768282f9ee53aea1d7aecdbaaa074e93a28a</span> — base58-encoded, that is the account's code_hash <span class="hash">3hBQKbUBzdxYNxJKYzgiuVNvWqjXFiifJXNM3oBg26Vf</span>. Download the wasm, hash it, compare: the deployed bytecode is the published build, no trust in the builder required.</p>
   </div>
   <a class="cta" href="test.html">Back to the live test →</a>
+
+  <div class="panel post"><div class="label">Field note</div><h3>Verify everything in 60 seconds</h3><p>Three checks: hash claims.txt and compare with get_claims; hash official-results.json and compare with verdict #1; hash contract.wasm, base58 the digest, and compare with the account's code hash. No account, no permission, no trust required — if all three match, the chronology on this page is the chronology on-chain.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>What the seal does not prove</h3><p>It does not prove the bars were wise, the sources honest, or the thesis important. It proves one narrow thing: these exact words existed at block 277671036, before the verdict at block 277675514. Seals prove order, not truth — anyone selling you more than that is selling something.</p></div>
+  <div class="panel post"><div class="label">Field note</div><h3>If I wanted to cheat, how would I?</h3><p>Pick bars after peeking at the data — prevented: the seal precedes the run, publicly. Seal a vague claim and interpret it kindly later — prevented: the bars are numeric, inside the sealed text. Quietly edit the site copy — visible: the repo history shows every change. Re-record a friendlier verdict — prevented: record_verdict is owner-only and verdict #1's hash is pinned across this page and the repo. The one remaining cheat, redeploying the contract, would break the code-hash match above and erase the chronology — in other words, it would be visible. Judge accordingly.</p></div>
 </section>
 <footer>
   <p><strong>Data sources:</strong> DefiLlama (Intents volume, chain TVL, chain fees) · CoinGecko
@@ -496,9 +550,9 @@
   <div class="railcard">
     <div class="label">At a glance — live</div>
     <div class="grow"><div class="label">NEAR price</div><div class="gv" id="gPrice">…</div><div class="gs" id="gPriceSub">CoinGecko</div></div>
-    <div class="grow"><div class="label">Market cap</div><div class="gv" id="gCap">…</div><div class="gs">CoinGecko · bar: ≥ $4.0B (C5)</div></div>
-    <div class="grow"><div class="label">Intents volume, 30d</div><div class="gv" id="gIntents">…</div><div class="gs">DefiLlama · bar: ≥ $3.0B (C1)</div></div>
-    <div class="grow"><div class="label">Chain fees, 30d</div><div class="gv" id="gFees">…</div><div class="gs">DefiLlama · bar: ≥ $250K (C3)</div></div>
+    <div class="grow"><div class="label">Market cap</div><div class="gv" id="gCap">$4.22B</div><div class="gs" id="gCapSub">official run 14 Nov · fetching live…</div></div>
+    <div class="grow"><div class="label">Intents volume, 30d</div><div class="gv" id="gIntents">$3.80B</div><div class="gs" id="gIntentsSub">official run 14 Nov · fetching live…</div></div>
+    <div class="grow"><div class="label">Chain fees, 30d</div><div class="gv" id="gFees">$129K</div><div class="gs" id="gFeesSub">official run 14 Nov · fetching live…</div></div>
     <p class="gs" style="font-size:12px;color:var(--faint);margin:10px 0 0">Fetched live in your browser. If a source is unreachable the card says so — never a guessed number.</p>
   </div>
   <div class="railcard">
@@ -522,12 +576,23 @@ function show(id, setHash){
   if (!document.getElementById("v-" + id)) id = "overview";
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "v-" + id));
   document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("on", b.dataset.v === id));
-  if (setHash !== false) { try { history.replaceState(null, "", "#" + id); } catch (e) {} }
+  if (setHash !== false) { try { history.pushState(null, "", "#" + id); } catch (e) {} }
   window.scrollTo(0, 0);
 }
-document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => show(b.dataset.v)));
+document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => {
+  show(b.dataset.v);
+  const nav = document.querySelector(".navwrap");
+  if (nav && nav.classList.contains("open")) { nav.classList.remove("open"); const mb = document.getElementById("menuBtn"); if (mb) mb.textContent = "☰ Sections — tap to open"; }
+}));
 document.querySelectorAll("[data-go]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); show(a.dataset.go); }));
 show((location.hash || "").replace("#", "") || "overview", false);
+window.addEventListener("hashchange", () => show((location.hash || "").replace("#", "") || "overview", false));
+const menuBtn = document.getElementById("menuBtn");
+if (menuBtn) menuBtn.addEventListener("click", () => {
+  const nav = document.querySelector(".navwrap");
+  const open = nav.classList.toggle("open");
+  menuBtn.textContent = open ? "✕ Sections — tap to close" : "☰ Sections — tap to open";
+});
 
 // === Shared fetch helpers ===
 async function getJSON(url){
@@ -575,13 +640,15 @@ function setCard(id, val, subId, sub){
   if (cg) {
     setCard("gPrice", "$" + Number(cg.current_price).toFixed(2), "gPriceSub",
       "CoinGecko · " + Number(cg.ath_change_percentage).toFixed(1) + "% vs ATH (C6 bar: within −50%)");
-    setCard("gCap", fmtBigUSD(Number(cg.market_cap)));
+    setCard("gCap", fmtBigUSD(Number(cg.market_cap)), "gCapSub", "CoinGecko · live · bar: ≥ $4.0B (C5)");
   } else {
     setCard("gPrice", "unavailable", "gPriceSub", "CoinGecko unreachable — official run: −84.26% vs ATH (FAIL)");
-    setCard("gCap", "unavailable");
+    setText("gCapSub", "official run 14 Nov · live unavailable now");
   }
-  setCard("gIntents", isFinite(intents) ? fmtBigUSD(intents) : "unavailable");
-  setCard("gFees", isFinite(fees) ? fmtBigUSD(fees) : "unavailable");
+  if (isFinite(intents)) setCard("gIntents", fmtBigUSD(intents), "gIntentsSub", "DefiLlama · live · bar: ≥ $3.0B (C1)");
+  else setText("gIntentsSub", "official run 14 Nov · live unavailable now");
+  if (isFinite(fees)) setCard("gFees", fmtBigUSD(fees), "gFeesSub", "DefiLlama · live · bar: ≥ $250K (C3)");
+  else setText("gFeesSub", "official run 14 Nov · live unavailable now");
 
   // Supply
   if (cg && isFinite(Number(cg.circulating_supply))) {

@@ -101,6 +101,7 @@ The exact results JSON is published in this repo as
   newline; adding one changes the hash, which is precisely the kind of
   detail a hash seal exists to catch).
 - `sha256sum contract.wasm` → `28025e2da723abb5d93ec78c0879768282f9ee53aea1d7aecdbaaa074e93a28a`; that digest, base58-encoded, is exactly the account's on-chain code_hash `3hBQKbUBzdxYNxJKYzgiuVNvWqjXFiifJXNM3oBg26Vf` — so the deployed bytecode is verifiably the published build.
+- Honest limit: the official run archived its derived results JSON (above) but not the raw API payloads behind it; values can be re-checked against live sources and the sealed hashes, but the exact 21:20 responses were not retained.
 - `near view falsifynear.testnet get_verdicts` → verdict #1 carries the
   same results hash, `passed: 4`, `total: 6`, recorded by the claims owner
   at block 277675514 — after the claims seal at block 277671036.
