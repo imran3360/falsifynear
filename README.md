@@ -1,7 +1,7 @@
 # FalsifyNEAR — an investment thesis that tries to kill itself
 
 **NEAR Hackathon · Thesis track.** Built by Imran (GitHub: imran3360).
-Contract: **falsify.imran3360.testnet** (NEAR testnet). Payout: livewheat2666.near.
+Contract: **falsifynear.testnet** (NEAR testnet). Payout: livewheat2666.near.
 
 > **NOT FINANCIAL ADVICE.** This is a public experiment in falsifiable analysis,
 > not a recommendation to buy, sell, or hold NEAR or any other asset.
@@ -71,8 +71,8 @@ Claims hash (SHA-256 of claims.txt):
    - Download `claims.txt` from this repo and run `sha256sum claims.txt`.
    - Read the contract on NEAR testnet — a keyless view call to
      `https://rpc.testnet.near.org`, method `query` / `call_function`,
-     account `falsify.imran3360.testnet`, method `get_claims`, args `{}` —
-     or `near view falsify.imran3360.testnet get_claims` with near-cli.
+     account `falsifynear.testnet`, method `get_claims`, args `{}` —
+     or `near view falsifynear.testnet get_claims` with near-cli.
    - The two hashes either match or they don't. The live page performs
      exactly this comparison in your browser and shows MATCH / MISMATCH.
 5. Verdicts are sealed the same way: each run produces a results JSON on the
@@ -108,6 +108,19 @@ deploy recipe: [`contract/DEPLOY.md`](contract/DEPLOY.md). The contract stores
 - **DefiLlama/CoinGecko are aggregators**; their methodologies can change.
   Every figure on the page links to its source so the number can be audited
   at the origin.
+
+## Contract fix note (2026-11-14)
+
+The first deployed build (code hash `FH3owTViksxaiATrmZbvYh9YMSXg8F3XwmdXf3BfiEyR`)
+initialized the claims field to `null`; in near-sdk-js that breaks state
+reconstruction once a real record is stored, so every view panicked after
+`register_claims` succeeded. The claims seal itself was never at risk — it is
+in the `register_claims` transaction (tx
+`7axaubcY1QWb2UGZGBzSyQohPAdcFmuBSkXKWdKogzY`, block 277671036). The fix
+initializes the field to an empty record object instead of `null`; the
+patched build (code hash `HAcd5RCdvZLU1p5t7BR2x2wfiTLGXqRmnk4EnaKLPZk1`,
+redeploy tx `uQetLtdJvZTSsqVYRRE7zobFKjfY2WQYKYKVxDLABuH`) replaced only the
+code — the sealed record survived untouched and `get_claims` now returns it.
 
 ## Cross-disclosure
 

@@ -11,7 +11,7 @@ import { NearBindgen, call, view, near } from "near-sdk-js";
 @NearBindgen({})
 class FalsifyContract {
   constructor() {
-    this.claims = null; // single claims record, set exactly once
+    this.claims = { owner: "", claims_hash: "", block_height: 0, timestamp_ms: 0 }; // single claims record, set exactly once
     this.verdicts = []; // array of verdict records (append-only)
   }
 
@@ -22,7 +22,7 @@ class FalsifyContract {
   @call({})
   register_claims({ claims_hash }) {
     if (!/^[0-9a-f]{64}$/.test(claims_hash || "")) throw new Error("claims_hash must be a SHA-256 hex string");
-    if (this.claims) throw new Error("claims already registered — the sealed claims are immutable");
+    if (this.claims && this.claims.claims_hash) throw new Error("claims already registered — the sealed claims are immutable");
     const record = {
       owner: near.predecessorAccountId(),
       claims_hash,
@@ -40,7 +40,7 @@ class FalsifyContract {
   @call({})
   record_verdict({ results_hash, passed, total }) {
     if (!/^[0-9a-f]{64}$/.test(results_hash || "")) throw new Error("results_hash must be a SHA-256 hex string");
-    if (!this.claims) throw new Error("no claims registered yet — seal the claims before recording verdicts");
+    if (!this.claims || !this.claims.claims_hash) throw new Error("no claims registered yet — seal the claims before recording verdicts");
     const p = Number(passed);
     const t = Number(total);
     if (!Number.isInteger(p) || !Number.isInteger(t) || p < 0 || t < 0 || p > t) {
@@ -61,7 +61,7 @@ class FalsifyContract {
 
   @view({})
   get_claims() {
-    return this.claims || null;
+    return (this.claims && this.claims.claims_hash) ? this.claims : null;
   }
 
   @view({})
